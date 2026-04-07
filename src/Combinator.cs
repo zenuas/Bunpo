@@ -107,6 +107,7 @@ public static class Combinator
     public static readonly Func<string, int, int?> Lf = Char('\n');
     public static readonly Func<string, int, int?> CrLf = Cr + Lf;
     public static readonly Func<string, int, int?> NewLine = Lf / CrLf / Cr;
+    public static readonly Func<string, int, int?> LineStart = (input, start) => start <= 0 || input[start - 1] is '\n' or '\r' ? 0 : null;
     public static readonly Func<string, int, int?> LineEnd = (input, start) => input.Length <= start || input[start] is '\n' or '\r' ? 0 : null;
     public static readonly Func<string, int, int?> Space = Char(c => c is ' ' or '\t' or '\v' or '\n' or '\r' or '\f');
 
