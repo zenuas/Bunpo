@@ -131,19 +131,12 @@ public static class Combinator
         public Func<string, int, int?> ToMany(uint min, uint max) => Many(self, min, max);
         public bool IsMatch(string s, int start) => self(s, start) is { };
         public int? Match(string s, int start) => self(s, start);
-        public bool IsMatch(string s)
+        public bool IsMatch(string s) => self.Match(s) is { };
+        public (int Start, int Length)? Match(string s)
         {
             for (var i = 0; i <= s.Length; i++)
             {
-                if (self(s, i) is { }) return true;
-            }
-            return false;
-        }
-        public int? Match(string s)
-        {
-            for (var i = 0; i <= s.Length; i++)
-            {
-                if (self(s, i) is { } result) return result;
+                if (self(s, i) is { } result) return (i, result);
             }
             return null;
         }
