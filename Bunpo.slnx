@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="bench/Bunpo.Benchmark.csproj" />
+  <Project Path="src/Bunpo.csproj" />
+  <Project Path="test/Bunpo.Test.csproj" />
+</Solution>
