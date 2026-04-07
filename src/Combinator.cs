@@ -12,6 +12,8 @@ public static class Combinator
     public static Func<string, int, int?> String(string s) => (input, start) => input.Length < start + s.Length || !input.StartsWith(s, StringComparison.Ordinal) ? null : s.Length;
     public static Func<string, int, int?> String(Func<string, int, int?> f) => (input, start) => f(input, start);
 
+    public static Func<string, int, int?> Option(Func<string, int, int?> once) => (input, start) => once(input, start) ?? 0;
+
     public static Func<string, int, int?> Many(Func<string, int, int?> many) => (input, start) =>
     {
         var length = 0;
@@ -126,6 +128,7 @@ public static class Combinator
     {
         public static Func<string, int, int?> operator +(Func<string, int, int?> a, Func<string, int, int?> b) => Sequence(a, b);
         public static Func<string, int, int?> operator /(Func<string, int, int?> a, Func<string, int, int?> b) => Choice(a, b);
+        public Func<string, int, int?> ToOption() => Option(self);
         public Func<string, int, int?> ToMany() => Many(self);
         public Func<string, int, int?> ToMany1() => Many1(self);
         public Func<string, int, int?> ToMany(uint min, uint max) => Many(self, min, max);

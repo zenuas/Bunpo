@@ -105,6 +105,17 @@ public class BunpoTest
     }
 
     [Fact]
+    public void OptionTest()
+    {
+        Assert.Equal(Combinator.Option(Combinator.Char('a')).Match(""), (0, 0));
+        Assert.Equal(Combinator.Option(Combinator.Char('a')).Match("a"), (0, 1));
+        Assert.Equal(Combinator.Option(Combinator.Char('a')).Match("aa"), (0, 1));
+        Assert.Equal(Combinator.Option(Combinator.Char('a')).Match("ab"), (0, 1));
+        Assert.Equal(Combinator.Option(Combinator.Char('a')).Match("ba"), (0, 0));
+        Assert.Equal(Combinator.Option(Combinator.Char('a')).Match("xyz"), (0, 0));
+    }
+
+    [Fact]
     public void ManyTest()
     {
         Assert.Equal(Combinator.Many(Combinator.Char('a')).Match(""), (0, 0));
