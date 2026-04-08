@@ -10,31 +10,39 @@ public class BunpoTest
     {
         Assert.Throws<ArgumentOutOfRangeException>(() => Combinator.Many(Combinator.AnyChar, 1, 0));
 
-        Assert.Equal(Combinator.AnyChar.Match("", -1), null);
+        Assert.Throws<ArgumentOutOfRangeException>(() => Combinator.AnyChar.Match("", -1));
+        Assert.Equal(Combinator.AnyChar("", -1), null);
         Assert.Equal(Combinator.AnyChar.Match("", 1), null);
 
-        Assert.Equal(Combinator.CharClass("a").Match("", -1), null);
+        Assert.Throws<ArgumentOutOfRangeException>(() => Combinator.CharClass("a").Match("", -1));
+        Assert.Equal(Combinator.CharClass("a")("", -1), null);
         Assert.Equal(Combinator.CharClass("a").Match("", 1), null);
 
-        Assert.Equal(Combinator.String("a").Match("", -1), null);
+        Assert.Throws<ArgumentOutOfRangeException>(() => Combinator.String("a").Match("", -1));
         Assert.Equal(Combinator.String("a").Match("", 1), null);
 
-        Assert.Equal(Combinator.AnyChar.ToMany().Match("", -1), null);
+        Assert.Throws<ArgumentOutOfRangeException>(() => Combinator.AnyChar.ToMany().Match("", -1));
+        Assert.Equal(Combinator.AnyChar.ToMany()("", -1), null);
         Assert.Equal(Combinator.AnyChar.ToMany().Match("", 1), null);
 
-        Assert.Equal(Combinator.AnyChar.ToMany1().Match("", -1), null);
+        Assert.Throws<ArgumentOutOfRangeException>(() => Combinator.AnyChar.ToMany1().Match("", -1));
+        Assert.Equal(Combinator.AnyChar.ToMany1()("", -1), null);
         Assert.Equal(Combinator.AnyChar.ToMany1().Match("", 1), null);
 
-        Assert.Equal(Combinator.AnyChar.ToMany(0, 1).Match("", -1), null);
+        Assert.Throws<ArgumentOutOfRangeException>(() => Combinator.AnyChar.ToMany(0, 1).Match("", -1));
+        Assert.Equal(Combinator.AnyChar.ToMany(0, 1)("", -1), null);
         Assert.Equal(Combinator.AnyChar.ToMany(0, 1).Match("", 1), null);
 
-        Assert.Equal(Combinator.AnyChar.ToOption().Match("", -1), null);
+        Assert.Throws<ArgumentOutOfRangeException>(() => Combinator.AnyChar.ToOption().Match("", -1));
+        Assert.Equal(Combinator.AnyChar.ToOption()("", -1), null);
         Assert.Equal(Combinator.AnyChar.ToOption().Match("", 1), null);
 
-        Assert.Equal(Combinator.WordBoundary.Match("", -1), null);
+        Assert.Throws<ArgumentOutOfRangeException>(() => Combinator.WordBoundary.Match("", -1));
+        Assert.Equal(Combinator.WordBoundary("", -1), null);
         Assert.Equal(Combinator.WordBoundary.Match("", 1), null);
 
-        Assert.Equal(Combinator.NonWordBoundary.Match("", -1), null);
+        Assert.Throws<ArgumentOutOfRangeException>(() => Combinator.NonWordBoundary.Match("", -1));
+        Assert.Equal(Combinator.NonWordBoundary("", -1), null);
         Assert.Equal(Combinator.NonWordBoundary.Match("", 1), null);
     }
 
@@ -266,10 +274,10 @@ public class BunpoTest
         Assert.Equal(Combinator.WordBoundary.Match("[  xyzabc123]"), (3, 0, true));
         Assert.Equal(Combinator.WordBoundary.Match("xyzabc123]"), (0, 0, true));
         Assert.Equal(Combinator.WordBoundary.Match("[]"), null);
-        Assert.Equal(Combinator.WordBoundary.Match("xyz", 0), (0, true));
-        Assert.Equal(Combinator.WordBoundary.Match("xyz", 1), null);
-        Assert.Equal(Combinator.WordBoundary.Match("xyz", 2), null);
-        Assert.Equal(Combinator.WordBoundary.Match("xyz", 3), (0, true));
+        Assert.Equal(Combinator.WordBoundary.Match("xyz", 0), (0, 0, true));
+        Assert.Equal(Combinator.WordBoundary.Match("xyz", 1), (3, 0, true));
+        Assert.Equal(Combinator.WordBoundary.Match("xyz", 2), (3, 0, true));
+        Assert.Equal(Combinator.WordBoundary.Match("xyz", 3), (3, 0, true));
     }
 
     [Fact]
@@ -278,9 +286,9 @@ public class BunpoTest
         Assert.Equal(Combinator.NonWordBoundary.Match("[  xyzabc123]"), (0, 0, true));
         Assert.Equal(Combinator.NonWordBoundary.Match("xyzabc123]"), (1, 0, true));
         Assert.Equal(Combinator.NonWordBoundary.Match("[]"), (0, 0, true));
-        Assert.Equal(Combinator.NonWordBoundary.Match("xyz", 0), null);
-        Assert.Equal(Combinator.NonWordBoundary.Match("xyz", 1), (0, true));
-        Assert.Equal(Combinator.NonWordBoundary.Match("xyz", 2), (0, true));
+        Assert.Equal(Combinator.NonWordBoundary.Match("xyz", 0), (1, 0, true));
+        Assert.Equal(Combinator.NonWordBoundary.Match("xyz", 1), (1, 0, true));
+        Assert.Equal(Combinator.NonWordBoundary.Match("xyz", 2), (2, 0, true));
         Assert.Equal(Combinator.NonWordBoundary.Match("xyz", 3), null);
     }
 

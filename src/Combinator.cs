@@ -167,12 +167,12 @@ public static class Combinator
         public Func<string, int, (int, T[])?> ToMany() => Many(self, xs => xs.ToArray());
         public Func<string, int, (int, T[])?> ToMany1() => Many1(self, xs => xs.ToArray());
         public Func<string, int, (int, T[])?> ToMany(uint min, uint max) => Many(self, min, max, xs => xs.ToArray());
-        public bool IsMatch(string s, int start) => self(s, start) is { };
-        public (int Length, T)? Match(string s, int start) => self(s, start);
-        public bool IsMatch(string s) => self.Match(s) is { };
-        public (int Start, int Length, T Value)? Match(string s)
+        public bool IsMatch(string s, int start = 0) => self.Match(s, start) is { };
+        public (int Start, int Length, T Value)? Match(string s, int start = 0)
         {
-            for (var i = 0; i <= s.Length; i++)
+            ArgumentOutOfRangeException.ThrowIfNegative(start);
+
+            for (var i = start; i <= s.Length; i++)
             {
                 if (self(s, i) is { } result) return (i, result.Item1, result.Item2);
             }
