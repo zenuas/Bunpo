@@ -6,19 +6,20 @@ namespace Bunpo;
 
 public static class Combinator
 {
-    public static Func<string, int, (int, char)?> Char(char c) => (input, start) => input.Length <= start || input[start] != c ? null : (1, c);
-    public static Func<string, int, (int, char)?> Char(Func<char, bool> f) => (input, start) => input.Length <= start || !f(input[start]) ? null : (1, input[start]);
-    public static Func<string, int, (int, char)?> CharClass(params char[] chars) => (input, start) => input.Length <= start || !chars.Contains(input[start]) ? null : (1, input[start]);
+    public static Func<string, int, (int, char)?> Char(char c) => (input, start) => input.Length <= start || start < 0 || input[start] != c ? null : (1, c);
+    public static Func<string, int, (int, char)?> Char(Func<char, bool> f) => (input, start) => input.Length <= start || start < 0 || !f(input[start]) ? null : (1, input[start]);
+    public static Func<string, int, (int, char)?> CharClass(params char[] chars) => (input, start) => input.Length <= start || start < 0 || !chars.Contains(input[start]) ? null : (1, input[start]);
     public static Func<string, int, (int, char)?> CharClass(string chars) => CharClass(chars.ToCharArray());
-    public static Func<string, int, (int, string)?> String(string s) => (input, start) => input.Length < start + s.Length || !input.StartsWith(s, StringComparison.Ordinal) ? null : (s.Length, s);
+    public static Func<string, int, (int, string)?> String(string s) => (input, start) => input.Length < start + s.Length || start < 0 || !input.StartsWith(s, StringComparison.Ordinal) ? null : (s.Length, s);
     public static Func<string, int, (int, string)?> String(Func<string, int, (int, char)?> c) => Many1(c, xs => string.Join("", xs));
     public static Func<string, int, (int, T)?> String<T>(Func<string, int, (int, T)?> f) => (input, start) => f(input, start);
 
-    public static Func<string, int, (int, T?)?> Option<T>(Func<string, int, (int, T)?> once) => (input, start) => once(input, start) is { } p ? p : (0, default);
+    public static Func<string, int, (int, T?)?> Option<T>(Func<string, int, (int, T)?> once) => (input, start) => input.Length < start || start < 0 ? null : once(input, start) is { } p ? p : (0, default);
 
     public static Func<string, int, (int, T?)?> Many<T>(Func<string, int, (int, T)?> many) => Many(many, static xs => xs.LastOrDefault());
     public static Func<string, int, (int, R)?> Many<T, R>(Func<string, int, (int, T)?> many, Func<IReadOnlyList<T>, R> match) => (input, start) =>
     {
+        if (start < 0 || start > input.Length) return null;
         var length = 0;
         var values = new List<T>();
         while (true)
@@ -34,6 +35,7 @@ public static class Combinator
     public static Func<string, int, (int, T)?> Many1<T>(Func<string, int, (int, T)?> many) => Many1(many, static xs => xs.Last());
     public static Func<string, int, (int, R)?> Many1<T, R>(Func<string, int, (int, T)?> many, Func<IReadOnlyList<T>, R> match) => (input, start) =>
     {
+        if (start < 0 || start > input.Length) return null;
         var first = many(input, start);
         if (first is null) return null;
 
@@ -55,6 +57,7 @@ public static class Combinator
         ArgumentOutOfRangeException.ThrowIfGreaterThan(min, max);
         return (input, start) =>
         {
+            if (start < 0 || start > input.Length) return null;
             var length = 0;
             var values = new List<T>();
             var i = 0;
@@ -80,6 +83,7 @@ public static class Combinator
     public static Func<string, int, (int, T?)?> Sequence<T>(params Func<string, int, (int, T)?>[] sequence) => Sequence(sequence, static xs => xs.LastOrDefault());
     public static Func<string, int, (int, R)?> Sequence<T, R>(Func<string, int, (int, T)?>[] sequence, Func<IReadOnlyList<T>, R> match) => (input, start) =>
     {
+        if (start < 0 || start > input.Length) return null;
         var length = 0;
         var values = new List<T>();
         foreach (var s in sequence)
@@ -95,6 +99,7 @@ public static class Combinator
     public static Func<string, int, (int, T)?> Choice<T>(Func<string, int, (int, T)?> left, Func<string, int, (int, T)?> right) => (input, start) => left(input, start) ?? right(input, start);
     public static Func<string, int, (int, T)?> Choice<T>(params Func<string, int, (int, T)?>[] choice) => (input, start) =>
     {
+        if (start < 0 || start > input.Length) return null;
         foreach (var c in choice)
         {
             var result = c(input, start);
@@ -103,7 +108,7 @@ public static class Combinator
         return null;
     };
 
-    public static Func<string, int, (int, T)?> ZeroWidth<T>(Func<string, int, (bool, T)> f) => (input, start) => f(input, start) is { } p && p.Item1 ? (0, p.Item2) : null;
+    public static Func<string, int, (int, T)?> ZeroWidth<T>(Func<string, int, (bool, T)> f) => (input, start) => start >= 0 && start <= input.Length && f(input, start) is { } p && p.Item1 ? (0, p.Item2) : null;
 
     public static readonly Func<string, int, (int, char)?> Digit = Char(char.IsAsciiDigit);
     public static readonly Func<string, int, (int, char)?> HexDigit = Char(char.IsAsciiHexDigit);

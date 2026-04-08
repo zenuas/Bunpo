@@ -9,6 +9,21 @@ public class BunpoTest
     public void Error()
     {
         Assert.Throws<ArgumentOutOfRangeException>(() => Combinator.Many(Combinator.AnyChar, 1, 0));
+
+        Assert.Equal(Combinator.AnyChar.Match("", -1), null);
+        Assert.Equal(Combinator.AnyChar.Match("", 1), null);
+
+        Assert.Equal(Combinator.AnyChar.ToMany().Match("", -1), null);
+        Assert.Equal(Combinator.AnyChar.ToMany().Match("", 1), null);
+
+        Assert.Equal(Combinator.AnyChar.ToMany1().Match("", -1), null);
+        Assert.Equal(Combinator.AnyChar.ToMany1().Match("", 1), null);
+
+        Assert.Equal(Combinator.AnyChar.ToMany(0, 1).Match("", -1), null);
+        Assert.Equal(Combinator.AnyChar.ToMany(0, 1).Match("", 1), null);
+
+        Assert.Equal(Combinator.AnyChar.ToOption().Match("", -1), null);
+        Assert.Equal(Combinator.AnyChar.ToOption().Match("", 1), null);
     }
 
     [Fact]
