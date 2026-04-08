@@ -188,4 +188,29 @@ public class BunpoTest
         Assert.Equal(Combinator.Choice([Combinator.Char('a'), Combinator.Char('b'), Combinator.Char('c')]).Match("ba"), (0, 1, 'b'));
         Assert.Equal(Combinator.Choice([Combinator.Char('a'), Combinator.Char('b'), Combinator.Char('c')]).Match("xyz"), null);
     }
+
+    [Fact]
+    public void OperatorTest()
+    {
+        var a = Combinator.Char('a');
+        var b = Combinator.Char('b');
+        var c = Combinator.Char('c');
+        var abc = a ^ b ^ c;
+        Assert.Equal(abc.Match(""), null);
+        Assert.Equal(abc.Match("ab"), null);
+        Assert.Equal(abc.Match("ac"), null);
+        Assert.Equal(abc.Match("ax"), null);
+        Assert.Equal(abc.Match("abc"), (0, 3, "abc"));
+        Assert.Equal(abc.Match("xabc"), (1, 3, "abc"));
+        Assert.Equal(abc.Match("xybc"), null);
+
+        var ab_c = a ^ b | Combinator.String(c);
+        Assert.Equal(ab_c.Match(""), null);
+        Assert.Equal(ab_c.Match("ab"), (0, 2, "ab"));
+        Assert.Equal(ab_c.Match("ac"), (1, 1, "c"));
+        Assert.Equal(ab_c.Match("ax"), null);
+        Assert.Equal(ab_c.Match("abc"), (0, 2, "ab"));
+        Assert.Equal(ab_c.Match("xabc"), (1, 2, "ab"));
+        Assert.Equal(ab_c.Match("xybc"), (3, 1, "c"));
+    }
 }

@@ -112,8 +112,8 @@ public static class Combinator
     public static readonly Func<string, int, (int, char)?> AnyChar = Char(_ => true);
     public static readonly Func<string, int, (int, char)?> Cr = Char('\r');
     public static readonly Func<string, int, (int, char)?> Lf = Char('\n');
-    public static readonly Func<string, int, (int, string)?> CrLf = Add(Cr, Lf);
-    public static readonly Func<string, int, (int, string)?> NewLine = Add(Add(Lf, CrLf), Cr);
+    public static readonly Func<string, int, (int, string)?> CrLf = Cr ^ Lf;
+    public static readonly Func<string, int, (int, string)?> NewLine = Lf ^ CrLf ^ Cr;
     public static readonly Func<string, int, (int, string)?> LineStart = (input, start) => start <= 0 || input[start - 1] is '\n' or '\r' ? (0, "") : null;
     public static readonly Func<string, int, (int, string)?> LineEnd = (input, start) => input.Length <= start || input[start] is '\n' or '\r' ? (0, "") : null;
     public static readonly Func<string, int, (int, char)?> Space = Char(c => c is ' ' or '\t' or '\v' or '\n' or '\r' or '\f');
@@ -139,18 +139,18 @@ public static class Combinator
 
     extension(Func<string, int, (int, char)?>)
     {
-        public static Func<string, int, (int, string)?> operator +(Func<string, int, (int, char)?> a, Func<string, int, (int, char)?> b) => Add(a, b);
-        public static Func<string, int, (int, string)?> operator +(Func<string, int, (int, char)?> a, Func<string, int, (int, string)?> b) => Add(a, b);
+        public static Func<string, int, (int, string)?> operator ^(Func<string, int, (int, char)?> a, Func<string, int, (int, char)?> b) => Add(a, b);
+        public static Func<string, int, (int, string)?> operator ^(Func<string, int, (int, char)?> a, Func<string, int, (int, string)?> b) => Add(a, b);
     }
     extension(Func<string, int, (int, string)?>)
     {
-        public static Func<string, int, (int, string)?> operator +(Func<string, int, (int, string)?> a, Func<string, int, (int, char)?> b) => Add(a, b);
-        public static Func<string, int, (int, string)?> operator +(Func<string, int, (int, string)?> a, Func<string, int, (int, string)?> b) => Add(a, b);
+        public static Func<string, int, (int, string)?> operator ^(Func<string, int, (int, string)?> a, Func<string, int, (int, char)?> b) => Add(a, b);
+        public static Func<string, int, (int, string)?> operator ^(Func<string, int, (int, string)?> a, Func<string, int, (int, string)?> b) => Add(a, b);
     }
     extension<T>(Func<string, int, (int, T)?> self)
     {
-        public static Func<string, int, (int, T)?> operator +(Func<string, int, (int, T)?> a, Func<string, int, (int, T)?> b) => Sequence([a, b], static xs => xs.Last());
-        public static Func<string, int, (int, T)?> operator /(Func<string, int, (int, T)?> a, Func<string, int, (int, T)?> b) => Choice(a, b);
+        public static Func<string, int, (int, T)?> operator ^(Func<string, int, (int, T)?> a, Func<string, int, (int, T)?> b) => Sequence([a, b], static xs => xs.Last());
+        public static Func<string, int, (int, T)?> operator |(Func<string, int, (int, T)?> a, Func<string, int, (int, T)?> b) => Choice(a, b);
         public Func<string, int, (int, T?)?> ToOption() => Option(self);
         public Func<string, int, (int, T[])?> ToMany() => Many(self, xs => xs.ToArray());
         public Func<string, int, (int, T[])?> ToMany1() => Many1(self, xs => xs.ToArray());
