@@ -44,6 +44,14 @@ public class BunpoTest
         Assert.Throws<ArgumentOutOfRangeException>(() => Combinator.NonWordBoundary.Match("", -1));
         Assert.Equal(Combinator.NonWordBoundary("", -1), null);
         Assert.Equal(Combinator.NonWordBoundary.Match("", 1), null);
+
+        Assert.Throws<ArgumentOutOfRangeException>(() => Combinator.LineStart.Match("", -1));
+        Assert.Equal(Combinator.LineStart("", -1), null);
+        Assert.Equal(Combinator.LineStart.Match("", 1), null);
+
+        Assert.Throws<ArgumentOutOfRangeException>(() => Combinator.LineEnd.Match("", -1));
+        Assert.Equal(Combinator.LineEnd("", -1), null);
+        Assert.Equal(Combinator.LineEnd.Match("", 1), null);
     }
 
     [Fact]
