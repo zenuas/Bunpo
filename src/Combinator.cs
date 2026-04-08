@@ -109,6 +109,14 @@ public static class Combinator
     public static readonly Func<string, int, (int, char)?> HexDigit = Char(char.IsAsciiHexDigit);
     public static readonly Func<string, int, (int, char)?> Letter = Char(char.IsAsciiLetter);
     public static readonly Func<string, int, (int, char)?> Word = Char(c => char.IsAsciiLetterOrDigit(c) || c == '_');
+    public static readonly Func<string, int, (int, char)?> Space = Char(c => c is ' ' or '\t' or '\v' or '\n' or '\r' or '\f');
+
+    public static readonly Func<string, int, (int, string)?> Digits = String(Digit);
+    public static readonly Func<string, int, (int, string)?> HexDigits = String(HexDigit);
+    public static readonly Func<string, int, (int, string)?> Letters = String(Letter);
+    public static readonly Func<string, int, (int, string)?> Words = String(Word);
+    public static readonly Func<string, int, (int, string)?> Spaces = String(Space);
+
     public static readonly Func<string, int, (int, char)?> AnyChar = Char(_ => true);
     public static readonly Func<string, int, (int, char)?> Cr = Char('\r');
     public static readonly Func<string, int, (int, char)?> Lf = Char('\n');
@@ -116,7 +124,6 @@ public static class Combinator
     public static readonly Func<string, int, (int, string)?> NewLine = Lf ^ CrLf ^ Cr;
     public static readonly Func<string, int, (int, string)?> LineStart = (input, start) => start <= 0 || input[start - 1] is '\n' or '\r' ? (0, "") : null;
     public static readonly Func<string, int, (int, string)?> LineEnd = (input, start) => input.Length <= start || input[start] is '\n' or '\r' ? (0, "") : null;
-    public static readonly Func<string, int, (int, char)?> Space = Char(c => c is ' ' or '\t' or '\v' or '\n' or '\r' or '\f');
 
     public static readonly Func<string, int, int?> Start = (input, start) => start == 0 ? 0 : null;
     public static readonly Func<string, int, int?> End = (input, start) => input.Length <= start ? 0 : null;

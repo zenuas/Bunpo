@@ -213,4 +213,23 @@ public class BunpoTest
         Assert.Equal(ab_c.Match("xabc"), (1, 2, "ab"));
         Assert.Equal(ab_c.Match("xybc"), (3, 1, "c"));
     }
+
+    [Fact]
+    public void WordTest()
+    {
+        Assert.Equal(Combinator.Digit.Match("[  xyzabc123]"), (9, 1, '1'));
+        Assert.Equal(Combinator.Digits.Match("[  xyzabc123]"), (9, 3, "123"));
+
+        Assert.Equal(Combinator.HexDigit.Match("[  xyzabc123]"), (6, 1, 'a'));
+        Assert.Equal(Combinator.HexDigits.Match("[  xyzabc123]"), (6, 6, "abc123"));
+
+        Assert.Equal(Combinator.Letter.Match("[  xyzabc123]"), (3, 1, 'x'));
+        Assert.Equal(Combinator.Letters.Match("[  xyzabc123]"), (3, 6, "xyzabc"));
+
+        Assert.Equal(Combinator.Word.Match("[  xyzabc123]"), (3, 1, 'x'));
+        Assert.Equal(Combinator.Words.Match("[  xyzabc123]"), (3, 9, "xyzabc123"));
+
+        Assert.Equal(Combinator.Space.Match("[  xyzabc123]"), (1, 1, ' '));
+        Assert.Equal(Combinator.Spaces.Match("[  xyzabc123]"), (1, 2, "  "));
+    }
 }
