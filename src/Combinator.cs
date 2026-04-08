@@ -137,12 +137,12 @@ public static class Combinator
     public static readonly Func<string, int, (int, bool)?> WordBoundary = (input, start) =>
         (start == 0 && input.Length > 0 && (char.IsAsciiLetterOrDigit(input[0]) || input[0] == '_')) ||
         (input.Length == start && input.Length > 0 && (char.IsAsciiLetterOrDigit(input[^1]) || input[^1] == '_')) ||
-        (start > 0 && input.Length > start + 1 && (char.IsAsciiLetterOrDigit(input[start]) || input[start] == '_') != (char.IsAsciiLetterOrDigit(input[start + 1]) || input[start + 1] == '_')) ? (0, true) : null;
+        (start > 0 && input.Length > start && (char.IsAsciiLetterOrDigit(input[start]) || input[start] == '_') != (char.IsAsciiLetterOrDigit(input[start - 1]) || input[start - 1] == '_')) ? (0, true) : null;
 
     public static readonly Func<string, int, (int, bool)?> NonWordBoundary = (input, start) =>
         (start == 0 && input.Length > 0 && !(char.IsAsciiLetterOrDigit(input[0]) || input[0] == '_')) ||
         (input.Length == start && input.Length > 0 && !(char.IsAsciiLetterOrDigit(input[^1]) || input[^1] == '_')) ||
-        (start > 0 && input.Length > start + 1 && (char.IsAsciiLetterOrDigit(input[start]) || input[start] == '_') == (char.IsAsciiLetterOrDigit(input[start + 1]) || input[start + 1] == '_')) ? (0, true) : null;
+        (start > 0 && input.Length > start && (char.IsAsciiLetterOrDigit(input[start]) || input[start] == '_') == (char.IsAsciiLetterOrDigit(input[start - 1]) || input[start - 1] == '_')) ? (0, true) : null;
 
     public static Func<string, int, (int, string)?> Add(Func<string, int, (int, char)?> a, Func<string, int, (int, char)?> b) => Sequence([a, b], static xs => $"{xs[0]}{xs[1]}");
     public static Func<string, int, (int, string)?> Add(Func<string, int, (int, char)?> a, Func<string, int, (int, string)?> b) => Add(String(a), b);
