@@ -30,6 +30,12 @@ public class BunpoTest
 
         Assert.Equal(Combinator.AnyChar.ToOption().Match("", -1), null);
         Assert.Equal(Combinator.AnyChar.ToOption().Match("", 1), null);
+
+        Assert.Equal(Combinator.WordBoundary.Match("", -1), null);
+        Assert.Equal(Combinator.WordBoundary.Match("", 1), null);
+
+        Assert.Equal(Combinator.NonWordBoundary.Match("", -1), null);
+        Assert.Equal(Combinator.NonWordBoundary.Match("", 1), null);
     }
 
     [Fact]
