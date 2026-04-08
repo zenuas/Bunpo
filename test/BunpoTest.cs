@@ -279,24 +279,24 @@ public class BunpoTest
     [Fact]
     public void WordBoundaryTest()
     {
-        Assert.Equal(Combinator.WordBoundary.Match("[  xyzabc123]"), (3, 0, true));
-        Assert.Equal(Combinator.WordBoundary.Match("xyzabc123]"), (0, 0, true));
+        Assert.Equal(Combinator.WordBoundary.Match("[  xyzabc123]"), (3, 0, ""));
+        Assert.Equal(Combinator.WordBoundary.Match("xyzabc123]"), (0, 0, ""));
         Assert.Equal(Combinator.WordBoundary.Match("[]"), null);
-        Assert.Equal(Combinator.WordBoundary.Match("xyz", 0), (0, 0, true));
-        Assert.Equal(Combinator.WordBoundary.Match("xyz", 1), (3, 0, true));
-        Assert.Equal(Combinator.WordBoundary.Match("xyz", 2), (3, 0, true));
-        Assert.Equal(Combinator.WordBoundary.Match("xyz", 3), (3, 0, true));
+        Assert.Equal(Combinator.WordBoundary.Match("xyz", 0), (0, 0, ""));
+        Assert.Equal(Combinator.WordBoundary.Match("xyz", 1), (3, 0, ""));
+        Assert.Equal(Combinator.WordBoundary.Match("xyz", 2), (3, 0, ""));
+        Assert.Equal(Combinator.WordBoundary.Match("xyz", 3), (3, 0, ""));
     }
 
     [Fact]
     public void NonWordBoundaryTest()
     {
-        Assert.Equal(Combinator.NonWordBoundary.Match("[  xyzabc123]"), (0, 0, true));
-        Assert.Equal(Combinator.NonWordBoundary.Match("xyzabc123]"), (1, 0, true));
-        Assert.Equal(Combinator.NonWordBoundary.Match("[]"), (0, 0, true));
-        Assert.Equal(Combinator.NonWordBoundary.Match("xyz", 0), (1, 0, true));
-        Assert.Equal(Combinator.NonWordBoundary.Match("xyz", 1), (1, 0, true));
-        Assert.Equal(Combinator.NonWordBoundary.Match("xyz", 2), (2, 0, true));
+        Assert.Equal(Combinator.NonWordBoundary.Match("[  xyzabc123]"), (0, 0, ""));
+        Assert.Equal(Combinator.NonWordBoundary.Match("xyzabc123]"), (1, 0, ""));
+        Assert.Equal(Combinator.NonWordBoundary.Match("[]"), (0, 0, ""));
+        Assert.Equal(Combinator.NonWordBoundary.Match("xyz", 0), (1, 0, ""));
+        Assert.Equal(Combinator.NonWordBoundary.Match("xyz", 1), (1, 0, ""));
+        Assert.Equal(Combinator.NonWordBoundary.Match("xyz", 2), (2, 0, ""));
         Assert.Equal(Combinator.NonWordBoundary.Match("xyz", 3), null);
     }
 

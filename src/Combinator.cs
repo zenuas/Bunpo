@@ -130,19 +130,19 @@ public static class Combinator
     public static readonly Func<string, int, (int, string)?> LineStart = (input, start) => start == 0 || (start > 0 && (input[start - 1] == '\n' || (input[start - 1] == '\r' && (input.Length == start || (input.Length > start && input[start] != '\n'))))) ? (0, "") : null;
     public static readonly Func<string, int, (int, string)?> LineEnd = (input, start) => start >= 0 && (input.Length <= start || input[start] is '\n' or '\r') ? (0, "") : null;
 
-    public static readonly Func<string, int, (int, bool)?> Start = (input, start) => start == 0 ? (0, true) : null;
-    public static readonly Func<string, int, (int, bool)?> End = (input, start) => input.Length <= start ? (0, true) : null;
-    public static readonly Func<string, int, (int, bool)?> Error = (input, start) => null;
+    public static readonly Func<string, int, (int, string)?> Start = (input, start) => start == 0 ? (0, "") : null;
+    public static readonly Func<string, int, (int, string)?> End = (input, start) => input.Length <= start ? (0, "") : null;
+    public static readonly Func<string, int, (int, string)?> Error = (input, start) => null;
 
-    public static readonly Func<string, int, (int, bool)?> WordBoundary = (input, start) =>
+    public static readonly Func<string, int, (int, string)?> WordBoundary = (input, start) =>
         (start == 0 && input.Length > 0 && (char.IsAsciiLetterOrDigit(input[0]) || input[0] == '_')) ||
         (input.Length == start && input.Length > 0 && (char.IsAsciiLetterOrDigit(input[^1]) || input[^1] == '_')) ||
-        (start > 0 && input.Length > start && (char.IsAsciiLetterOrDigit(input[start]) || input[start] == '_') != (char.IsAsciiLetterOrDigit(input[start - 1]) || input[start - 1] == '_')) ? (0, true) : null;
+        (start > 0 && input.Length > start && (char.IsAsciiLetterOrDigit(input[start]) || input[start] == '_') != (char.IsAsciiLetterOrDigit(input[start - 1]) || input[start - 1] == '_')) ? (0, "") : null;
 
-    public static readonly Func<string, int, (int, bool)?> NonWordBoundary = (input, start) =>
+    public static readonly Func<string, int, (int, string)?> NonWordBoundary = (input, start) =>
         (start == 0 && input.Length > 0 && !(char.IsAsciiLetterOrDigit(input[0]) || input[0] == '_')) ||
         (input.Length == start && input.Length > 0 && !(char.IsAsciiLetterOrDigit(input[^1]) || input[^1] == '_')) ||
-        (start > 0 && input.Length > start && (char.IsAsciiLetterOrDigit(input[start]) || input[start] == '_') == (char.IsAsciiLetterOrDigit(input[start - 1]) || input[start - 1] == '_')) ? (0, true) : null;
+        (start > 0 && input.Length > start && (char.IsAsciiLetterOrDigit(input[start]) || input[start] == '_') == (char.IsAsciiLetterOrDigit(input[start - 1]) || input[start - 1] == '_')) ? (0, "") : null;
 
     public static Func<string, int, (int, string)?> Add(Func<string, int, (int, char)?> a, Func<string, int, (int, char)?> b) => Sequence([a, b], static xs => $"{xs[0]}{xs[1]}");
     public static Func<string, int, (int, string)?> Add(Func<string, int, (int, char)?> a, Func<string, int, (int, string)?> b) => Add(String(a), b);
