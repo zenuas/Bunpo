@@ -315,4 +315,44 @@ public class BunpoTest
         Assert.Equal(Combinator.CrLf.Match("abc\r\n123"), (3, 2, "\r\n"));
         Assert.Equal(Combinator.NewLine.Match("abc\r\n123"), (3, 2, "\r\n"));
     }
+
+    [Fact]
+    public void LineTest()
+    {
+        Assert.Equal(Combinator.LineStart.Match("abc123"), (0, 0, ""));
+        Assert.Equal(Combinator.LineStart.Match("abc123", 1), null);
+        Assert.Equal(Combinator.LineEnd.Match("abc123"), (6, 0, ""));
+        Assert.Equal(Combinator.LineEnd.Match("abc123", 5), (6, 0, ""));
+
+        Assert.Equal(Combinator.LineStart.Match("abc\r123"), (0, 0, ""));
+        Assert.Equal(Combinator.LineStart.Match("abc\r123", 1), (4, 0, ""));
+        Assert.Equal(Combinator.LineEnd.Match("abc\r123"), (3, 0, ""));
+        Assert.Equal(Combinator.LineEnd.Match("abc\r123", 5), (7, 0, ""));
+
+        Assert.Equal(Combinator.LineStart.Match("abc\n123"), (0, 0, ""));
+        Assert.Equal(Combinator.LineStart.Match("abc\n123", 1), (4, 0, ""));
+        Assert.Equal(Combinator.LineEnd.Match("abc\n123"), (3, 0, ""));
+        Assert.Equal(Combinator.LineEnd.Match("abc\n123", 5), (7, 0, ""));
+
+        Assert.Equal(Combinator.LineStart.Match("abc\r\n123"), (0, 0, ""));
+        Assert.Equal(Combinator.LineStart.Match("abc\r\n123", 1), (5, 0, ""));
+        Assert.Equal(Combinator.LineEnd.Match("abc\r\n123"), (3, 0, ""));
+        Assert.Equal(Combinator.LineEnd.Match("abc\r\n123", 5), (8, 0, ""));
+
+        Assert.Equal(Combinator.LineStart.Match("\ra", 0), (0, 0, ""));
+        Assert.Equal(Combinator.LineStart.Match("\ra", 1), (1, 0, ""));
+
+        Assert.Equal(Combinator.LineStart.Match("\r", 0), (0, 0, ""));
+        Assert.Equal(Combinator.LineStart.Match("\r", 1), (1, 0, ""));
+
+        Assert.Equal(Combinator.LineStart.Match("\na", 0), (0, 0, ""));
+        Assert.Equal(Combinator.LineStart.Match("\na", 1), (1, 0, ""));
+
+        Assert.Equal(Combinator.LineStart.Match("\n", 0), (0, 0, ""));
+        Assert.Equal(Combinator.LineStart.Match("\n", 1), (1, 0, ""));
+
+        Assert.Equal(Combinator.LineStart.Match("\r\n", 0), (0, 0, ""));
+        Assert.Equal(Combinator.LineStart.Match("\r\n", 1), (2, 0, ""));
+        Assert.Equal(Combinator.LineStart.Match("\r\n", 2), (2, 0, ""));
+    }
 }
