@@ -126,7 +126,7 @@ public static class Combinator
     public static readonly Func<string, int, (int, char)?> Cr = Char('\r');
     public static readonly Func<string, int, (int, char)?> Lf = Char('\n');
     public static readonly Func<string, int, (int, string)?> CrLf = Cr ^ Lf;
-    public static readonly Func<string, int, (int, string)?> NewLine = Lf ^ CrLf ^ Cr;
+    public static readonly Func<string, int, (int, string)?> NewLine = String(Lf) | CrLf | String(Cr);
     public static readonly Func<string, int, (int, string)?> LineStart = (input, start) => start <= 0 || input[start - 1] is '\n' or '\r' ? (0, "") : null;
     public static readonly Func<string, int, (int, string)?> LineEnd = (input, start) => input.Length <= start || input[start] is '\n' or '\r' ? (0, "") : null;
 

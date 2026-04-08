@@ -283,4 +283,28 @@ public class BunpoTest
         Assert.Equal(Combinator.NonWordBoundary.Match("xyz", 2), (0, true));
         Assert.Equal(Combinator.NonWordBoundary.Match("xyz", 3), null);
     }
+
+    [Fact]
+    public void NewLineTest()
+    {
+        Assert.Equal(Combinator.Cr.Match("abc123"), null);
+        Assert.Equal(Combinator.Lf.Match("abc123"), null);
+        Assert.Equal(Combinator.CrLf.Match("abc123"), null);
+        Assert.Equal(Combinator.NewLine.Match("abc123"), null);
+
+        Assert.Equal(Combinator.Cr.Match("abc\r123"), (3, 1, '\r'));
+        Assert.Equal(Combinator.Lf.Match("abc\r123"), null);
+        Assert.Equal(Combinator.CrLf.Match("abc\r123"), null);
+        Assert.Equal(Combinator.NewLine.Match("abc\r123"), (3, 1, "\r"));
+
+        Assert.Equal(Combinator.Cr.Match("abc\n123"), null);
+        Assert.Equal(Combinator.Lf.Match("abc\n123"), (3, 1, '\n'));
+        Assert.Equal(Combinator.CrLf.Match("abc\n123"), null);
+        Assert.Equal(Combinator.NewLine.Match("abc\n123"), (3, 1, "\n"));
+
+        Assert.Equal(Combinator.Cr.Match("abc\r\n123"), (3, 1, '\r'));
+        Assert.Equal(Combinator.Lf.Match("abc\r\n123"), (4, 1, '\n'));
+        Assert.Equal(Combinator.CrLf.Match("abc\r\n123"), (3, 2, "\r\n"));
+        Assert.Equal(Combinator.NewLine.Match("abc\r\n123"), (3, 2, "\r\n"));
+    }
 }
