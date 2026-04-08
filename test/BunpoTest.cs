@@ -13,6 +13,12 @@ public class BunpoTest
         Assert.Equal(Combinator.AnyChar.Match("", -1), null);
         Assert.Equal(Combinator.AnyChar.Match("", 1), null);
 
+        Assert.Equal(Combinator.CharClass("a").Match("", -1), null);
+        Assert.Equal(Combinator.CharClass("a").Match("", 1), null);
+
+        Assert.Equal(Combinator.String("a").Match("", -1), null);
+        Assert.Equal(Combinator.String("a").Match("", 1), null);
+
         Assert.Equal(Combinator.AnyChar.ToMany().Match("", -1), null);
         Assert.Equal(Combinator.AnyChar.ToMany().Match("", 1), null);
 
