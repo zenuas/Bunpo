@@ -411,4 +411,14 @@ public class BunpoTest
         Assert.Equal(Combinator.Start.Match("\r\n", 1), null);
         Assert.Equal(Combinator.Start.Match("\r\n", 2), null);
     }
+
+    [Fact]
+    public void CreateTest()
+    {
+        var parser = Combinator.Create() ^ 'x' ^ "123" ^ ['a', 'b', 'c'];
+
+        Assert.Equal(parser.Match("abc123", 0), null);
+        Assert.Equal(parser.Match("x123c", 0), (0, 5, "x123c"));
+        Assert.Equal(parser.Match(" x123c", 0), (1, 5, "x123c"));
+    }
 }

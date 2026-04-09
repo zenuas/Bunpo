@@ -10,10 +10,11 @@ public static class Combinator
     public static Func<string, int, (int, char)?> Char(Func<char, bool> f) => (input, start) => input.Length <= start || start < 0 || !f(input[start]) ? null : (1, input[start]);
     public static Func<string, int, (int, char)?> CharClass(params char[] chars) => (input, start) => input.Length <= start || start < 0 || !chars.Contains(input[start]) ? null : (1, input[start]);
     public static Func<string, int, (int, char)?> CharClass(string chars) => CharClass(chars.ToCharArray());
-    public static Func<string, int, (int, string)?> String(string s) => (input, start) => input.Length < start + s.Length || start < 0 || !input.StartsWith(s, StringComparison.Ordinal) ? null : (s.Length, s);
+    public static Func<string, int, (int, string)?> String(string s) => (input, start) => input.Length < start + s.Length || start < 0 || !input[start..].StartsWith(s, StringComparison.Ordinal) ? null : (s.Length, s);
     public static Func<string, int, (int, string)?> String(Func<string, int, (int, char)?> c) => Many1(c, xs => string.Join("", xs));
     public static Func<string, int, (int, T)?> String<T>(Func<string, int, (int, T)?> f) => (input, start) => f(input, start);
 
+    public static Func<string, int, (int, R)?> Once<T, R>(Func<string, int, (int, T)?> once, Func<T, R> match) => (input, start) => once(input, start) is { } p ? (p.Item1, match(p.Item2)) : null;
     public static Func<string, int, (int, T?)?> Option<T>(Func<string, int, (int, T)?> once) => (input, start) => input.Length < start || start < 0 ? null : once(input, start) is { } p ? p : (0, default);
 
     public static Func<string, int, (int, T?)?> Many<T>(Func<string, int, (int, T)?> many) => Many(many, static xs => xs.LastOrDefault());
@@ -144,20 +145,27 @@ public static class Combinator
         (input.Length == start && input.Length > 0 && !(char.IsAsciiLetterOrDigit(input[^1]) || input[^1] == '_')) ||
         (start > 0 && input.Length > start && (char.IsAsciiLetterOrDigit(input[start]) || input[start] == '_') == (char.IsAsciiLetterOrDigit(input[start - 1]) || input[start - 1] == '_')) ? (0, "") : null;
 
+    public static Func<string, int, (int, string)?> Create() => (input, start) => (0, "");
     public static Func<string, int, (int, string)?> Add(Func<string, int, (int, char)?> a, Func<string, int, (int, char)?> b) => Sequence([a, b], static xs => $"{xs[0]}{xs[1]}");
-    public static Func<string, int, (int, string)?> Add(Func<string, int, (int, char)?> a, Func<string, int, (int, string)?> b) => Add(String(a), b);
-    public static Func<string, int, (int, string)?> Add(Func<string, int, (int, string)?> a, Func<string, int, (int, char)?> b) => Add(a, String(b));
+    public static Func<string, int, (int, string)?> Add(Func<string, int, (int, char)?> a, Func<string, int, (int, string)?> b) => Add(Once(a, x => x.ToString()), b);
+    public static Func<string, int, (int, string)?> Add(Func<string, int, (int, string)?> a, Func<string, int, (int, char)?> b) => Add(a, Once(b, x => x.ToString()));
     public static Func<string, int, (int, string)?> Add(Func<string, int, (int, string)?> a, Func<string, int, (int, string)?> b) => Sequence([a, b], static xs => $"{xs[0]}{xs[1]}");
 
     extension(Func<string, int, (int, char)?>)
     {
         public static Func<string, int, (int, string)?> operator ^(Func<string, int, (int, char)?> a, Func<string, int, (int, char)?> b) => Add(a, b);
         public static Func<string, int, (int, string)?> operator ^(Func<string, int, (int, char)?> a, Func<string, int, (int, string)?> b) => Add(a, b);
+        public static Func<string, int, (int, string)?> operator ^(Func<string, int, (int, char)?> a, char b) => Add(a, Char(b));
+        public static Func<string, int, (int, string)?> operator ^(Func<string, int, (int, char)?> a, string b) => Add(a, String(b));
+        public static Func<string, int, (int, string)?> operator ^(Func<string, int, (int, char)?> a, char[] b) => Add(a, CharClass(b));
     }
     extension(Func<string, int, (int, string)?>)
     {
         public static Func<string, int, (int, string)?> operator ^(Func<string, int, (int, string)?> a, Func<string, int, (int, char)?> b) => Add(a, b);
         public static Func<string, int, (int, string)?> operator ^(Func<string, int, (int, string)?> a, Func<string, int, (int, string)?> b) => Add(a, b);
+        public static Func<string, int, (int, string)?> operator ^(Func<string, int, (int, string)?> a, char b) => Add(a, Char(b));
+        public static Func<string, int, (int, string)?> operator ^(Func<string, int, (int, string)?> a, string b) => Add(a, String(b));
+        public static Func<string, int, (int, string)?> operator ^(Func<string, int, (int, string)?> a, char[] b) => Add(a, CharClass(b));
     }
     extension<T>(Func<string, int, (int, T)?> self)
     {
