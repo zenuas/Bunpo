@@ -255,7 +255,7 @@ public class BunpoTest
         Assert.Equal(abc.Match("xabc"), (1, 3, "abc"));
         Assert.Equal(abc.Match("xybc"), null);
 
-        var ab_c = a ^ b | Combinator.String(c);
+        var ab_c = a ^ b | Combinator.Chars(c);
         Assert.Equal(ab_c.Match(""), null);
         Assert.Equal(ab_c.Match("ab"), (0, 2, "ab"));
         Assert.Equal(ab_c.Match("ac"), (1, 1, "c"));

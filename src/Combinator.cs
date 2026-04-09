@@ -8,10 +8,12 @@ public static class Combinator
 {
     public static Func<string, int, (int, char)?> Char(char c) => (input, start) => input.Length <= start || start < 0 || input[start] != c ? null : (1, c);
     public static Func<string, int, (int, char)?> Char(Func<char, bool> f) => (input, start) => input.Length <= start || start < 0 || !f(input[start]) ? null : (1, input[start]);
+    public static Func<string, int, (int, string)?> Chars(Func<string, int, (int, char)?> c) => Many1(c, xs => string.Join("", xs));
     public static Func<string, int, (int, char)?> CharClass(params char[] chars) => (input, start) => input.Length <= start || start < 0 || !chars.Contains(input[start]) ? null : (1, input[start]);
     public static Func<string, int, (int, char)?> CharClass(string chars) => CharClass(chars.ToCharArray());
+    public static Func<string, int, (int, string)?> String(char c) => Once(Char(c), _ => c.ToString());
     public static Func<string, int, (int, string)?> String(string s) => (input, start) => input.Length < start + s.Length || start < 0 || !input[start..].StartsWith(s, StringComparison.Ordinal) ? null : (s.Length, s);
-    public static Func<string, int, (int, string)?> String(Func<string, int, (int, char)?> c) => Many1(c, xs => string.Join("", xs));
+    public static Func<string, int, (int, string)?> String(Func<string, int, (int, char)?> c) => Once(c, x => x.ToString());
     public static Func<string, int, (int, T)?> String<T>(Func<string, int, (int, T)?> f) => (input, start) => f(input, start);
 
     public static Func<string, int, (int, R)?> Once<T, R>(Func<string, int, (int, T)?> once, Func<T, R> match) => (input, start) => once(input, start) is { } p ? (p.Item1, match(p.Item2)) : null;
@@ -117,11 +119,11 @@ public static class Combinator
     public static readonly Func<string, int, (int, char)?> Word = Char(c => char.IsAsciiLetterOrDigit(c) || c == '_');
     public static readonly Func<string, int, (int, char)?> Space = Char(c => c is ' ' or '\t' or '\v' or '\n' or '\r' or '\f');
 
-    public static readonly Func<string, int, (int, string)?> Digits = String(Digit);
-    public static readonly Func<string, int, (int, string)?> HexDigits = String(HexDigit);
-    public static readonly Func<string, int, (int, string)?> Letters = String(Letter);
-    public static readonly Func<string, int, (int, string)?> Words = String(Word);
-    public static readonly Func<string, int, (int, string)?> Spaces = String(Space);
+    public static readonly Func<string, int, (int, string)?> Digits = Chars(Digit);
+    public static readonly Func<string, int, (int, string)?> HexDigits = Chars(HexDigit);
+    public static readonly Func<string, int, (int, string)?> Letters = Chars(Letter);
+    public static readonly Func<string, int, (int, string)?> Words = Chars(Word);
+    public static readonly Func<string, int, (int, string)?> Spaces = Chars(Space);
 
     public static readonly Func<string, int, (int, char)?> AnyChar = Char(_ => true);
     public static readonly Func<string, int, (int, char)?> Cr = Char('\r');
