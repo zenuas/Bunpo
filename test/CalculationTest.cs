@@ -1,17 +1,17 @@
-﻿using System;
-using Xunit;
+﻿using Xunit;
+using Parser = System.Func<string, int, (int, float)?>;
 
 namespace Bunpo.Test;
 
 public class CalculationTest
 {
-    public static Func<string, int, (int, float)?> Number = Combinator.Once(Combinator.Digits, float.Parse);
-    public static Func<string, int, (int, float)?> Spaces = Combinator.Once(Combinator.Spaces.ToOption(), _ => 0f);
+    public static Parser Number = Combinator.Once(Combinator.Digits, float.Parse);
+    public static Parser Spaces = Combinator.Once(Combinator.Spaces.ToOption(), _ => 0f);
 
-    public static Func<string, int, (int, float)?> Add = Combinator.Once(Combinator.Char('+'), _ => 0f);
-    public static Func<string, int, (int, float)?> Sub = Combinator.Once(Combinator.Char('-'), _ => 0f);
-    public static Func<string, int, (int, float)?> Mul = Combinator.Once(Combinator.Char('*'), _ => 0f);
-    public static Func<string, int, (int, float)?> Div = Combinator.Once(Combinator.Char('/'), _ => 0f);
+    public static Parser Add = Combinator.Once(Combinator.Char('+'), _ => 0f);
+    public static Parser Sub = Combinator.Once(Combinator.Char('-'), _ => 0f);
+    public static Parser Mul = Combinator.Once(Combinator.Char('*'), _ => 0f);
+    public static Parser Div = Combinator.Once(Combinator.Char('/'), _ => 0f);
 
     [Fact]
     public void PlusTest()
