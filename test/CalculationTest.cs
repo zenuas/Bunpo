@@ -12,6 +12,8 @@ public class CalculationTest
     public static Parser Sub = Combinator.Once(Combinator.Char('-'), _ => 0f);
     public static Parser Mul = Combinator.Once(Combinator.Char('*'), _ => 0f);
     public static Parser Div = Combinator.Once(Combinator.Char('/'), _ => 0f);
+    public static Parser LParen = Combinator.Once(Combinator.Char('('), _ => 0f);
+    public static Parser RParen = Combinator.Once(Combinator.Char(')'), _ => 0f);
 
     [Fact]
     public void PlusTest()
@@ -29,7 +31,9 @@ public class CalculationTest
         var lazy_term = Combinator.Lazy<float>();
         var lazy_expr = Combinator.Lazy<float>();
 
-        var factor = Number;
+        var factor =
+            Number |
+            Combinator.Sequence([LParen, lazy_expr.Func, RParen], xs => xs[1]);
         var term =
             Combinator.Sequence([factor, Mul, lazy_term.Func], xs => xs[0] * xs[2]) |
             Combinator.Sequence([factor, Div, lazy_term.Func], xs => xs[0] / xs[2]) |
@@ -51,5 +55,6 @@ public class CalculationTest
         Assert.Equal(expr("2/4", 0)?.Item2, 0.5f);
         Assert.Equal(expr("1-2*3/4", 0)?.Item2, -0.5f);
         Assert.Equal(expr("1*2-3*4", 0)?.Item2, -10f);
+        Assert.Equal(expr("(1-2*3/4)+5", 0)?.Item2, 4.5f);
     }
 }
