@@ -212,6 +212,15 @@ public class BunpoTest
         Assert.Equal(Combinator.Sequence(Combinator.Char('a'), Combinator.Char('b')).Match("bb"), null);
         Assert.Equal(Combinator.Sequence(Combinator.Char('a'), Combinator.Char('b')).Match("ba"), null);
         Assert.Equal(Combinator.Sequence(Combinator.Char('a'), Combinator.Char('b')).Match("xyz"), null);
+
+        Assert.Equal(Combinator.Sequence([Combinator.Char('a'), Combinator.Char('b')]).Match(""), null);
+        Assert.Equal(Combinator.Sequence([Combinator.Char('a'), Combinator.Char('b')]).Match("a"), null);
+        Assert.Equal(Combinator.Sequence([Combinator.Char('a'), Combinator.Char('b')]).Match("aa"), null);
+        Assert.Equal(Combinator.Sequence([Combinator.Char('a'), Combinator.Char('b')]).Match("ab"), (0, 2, 'b'));
+        Assert.Equal(Combinator.Sequence([Combinator.Char('a'), Combinator.Char('b')]).Match("abc"), (0, 2, 'b'));
+        Assert.Equal(Combinator.Sequence([Combinator.Char('a'), Combinator.Char('b')]).Match("bb"), null);
+        Assert.Equal(Combinator.Sequence([Combinator.Char('a'), Combinator.Char('b')]).Match("ba"), null);
+        Assert.Equal(Combinator.Sequence([Combinator.Char('a'), Combinator.Char('b')]).Match("xyz"), null);
     }
 
     [Fact]
