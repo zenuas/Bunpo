@@ -32,29 +32,29 @@ public class CalculationTest
         var lazy_expr = Combinator.Lazy<float>();
 
         var factor =
-            Number |
-            Combinator.Sequence([LParen, lazy_expr.Func, RParen], xs => xs[1]);
+            Spaces ^ Number |
+            Spaces ^ Combinator.Sequence([LParen, lazy_expr.Func, Spaces, RParen], xs => xs[1]);
         var term =
-            Combinator.Sequence([factor, Mul, lazy_term.Func], xs => xs[0] * xs[2]) |
-            Combinator.Sequence([factor, Div, lazy_term.Func], xs => xs[0] / xs[2]) |
+            Combinator.Sequence([factor, Spaces ^ Mul, lazy_term.Func], xs => xs[0] * xs[2]) |
+            Combinator.Sequence([factor, Spaces ^ Div, lazy_term.Func], xs => xs[0] / xs[2]) |
             factor;
         var expr =
-            Combinator.Sequence([term, Add, lazy_expr.Func], xs => xs[0] + xs[2]) |
-            Combinator.Sequence([term, Sub, lazy_expr.Func], xs => xs[0] - xs[2]) |
+            Combinator.Sequence([term, Spaces ^ Add, lazy_expr.Func], xs => xs[0] + xs[2]) |
+            Combinator.Sequence([term, Spaces ^ Sub, lazy_expr.Func], xs => xs[0] - xs[2]) |
             term;
 
         lazy_term.LazyFunc = term;
         lazy_expr.LazyFunc = expr;
 
-        Assert.Equal(expr("1+2", 0)?.Item2, 3f);
-        Assert.Equal(expr("3*4", 0)?.Item2, 12f);
-        Assert.Equal(expr("1+2*3+4", 0)?.Item2, 11f);
+        Assert.Equal(expr(" 1 + 2", 0)?.Item2, 3f);
+        Assert.Equal(expr(" 3 * 4", 0)?.Item2, 12f);
+        Assert.Equal(expr(" 1 + 2 * 3 + 4", 0)?.Item2, 11f);
         Assert.Equal(expr("1*2+3*4", 0)?.Item2, 14f);
 
-        Assert.Equal(expr("1-2", 0)?.Item2, -1f);
-        Assert.Equal(expr("2/4", 0)?.Item2, 0.5f);
-        Assert.Equal(expr("1-2*3/4", 0)?.Item2, -0.5f);
-        Assert.Equal(expr("1*2-3*4", 0)?.Item2, -10f);
-        Assert.Equal(expr("(1-2*3/4)+5", 0)?.Item2, 4.5f);
+        Assert.Equal(expr(" 1 - 2", 0)?.Item2, -1f);
+        Assert.Equal(expr(" 2 / 4", 0)?.Item2, 0.5f);
+        Assert.Equal(expr(" 1 - 2 * 3 / 4", 0)?.Item2, -0.5f);
+        Assert.Equal(expr(" 1 * 2 - 3 * 4", 0)?.Item2, -10f);
+        Assert.Equal(expr(" ( 1 - 2 * 3 / 4 ) + 5", 0)?.Item2, 4.5f);
     }
 }
