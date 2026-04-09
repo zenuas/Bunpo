@@ -84,6 +84,17 @@ public static class Combinator
     }
 
     public static Func<string, int, (int, T?)?> Sequence<T>(params Func<string, int, (int, T)?>[] sequence) => Sequence(sequence, static xs => xs.LastOrDefault());
+    public static Func<string, int, (int, T2)?> Sequence<T1, T2>(Func<string, int, (int, T1)?> a, Func<string, int, (int, T2)?> b) => Sequence(a, b, static (_, xb) => xb);
+    public static Func<string, int, (int, R)?> Sequence<T1, T2, R>(Func<string, int, (int, T1)?> a, Func<string, int, (int, T2)?> b, Func<T1, T2, R> match) => (input, start) =>
+    {
+        if (start < 0 || start > input.Length) return null;
+        var r1 = a(input, start);
+        if (r1 is null) return null;
+        var next = start + r1.Value.Item1;
+        if (next > input.Length) return null;
+        var r2 = b(input, next);
+        return r2 is { } ? (r1.Value.Item1 + r2.Value.Item1, match(r1.Value.Item2, r2.Value.Item2)) : null;
+    };
     public static Func<string, int, (int, R)?> Sequence<T, R>(Func<string, int, (int, T)?>[] sequence, Func<IReadOnlyList<T>, R> match) => (input, start) =>
     {
         if (start < 0 || start > input.Length) return null;
@@ -148,10 +159,10 @@ public static class Combinator
         (start > 0 && input.Length > start && (char.IsAsciiLetterOrDigit(input[start]) || input[start] == '_') == (char.IsAsciiLetterOrDigit(input[start - 1]) || input[start - 1] == '_')) ? (0, "") : null;
 
     public static Func<string, int, (int, string)?> Create() => (input, start) => (0, "");
-    public static Func<string, int, (int, string)?> Add(Func<string, int, (int, char)?> a, Func<string, int, (int, char)?> b) => Sequence([a, b], static xs => $"{xs[0]}{xs[1]}");
+    public static Func<string, int, (int, string)?> Add(Func<string, int, (int, char)?> a, Func<string, int, (int, char)?> b) => Sequence(a, b, static (xa, xb) => $"{xa}{xb}");
     public static Func<string, int, (int, string)?> Add(Func<string, int, (int, char)?> a, Func<string, int, (int, string)?> b) => Add(Once(a, x => x.ToString()), b);
     public static Func<string, int, (int, string)?> Add(Func<string, int, (int, string)?> a, Func<string, int, (int, char)?> b) => Add(a, Once(b, x => x.ToString()));
-    public static Func<string, int, (int, string)?> Add(Func<string, int, (int, string)?> a, Func<string, int, (int, string)?> b) => Sequence([a, b], static xs => $"{xs[0]}{xs[1]}");
+    public static Func<string, int, (int, string)?> Add(Func<string, int, (int, string)?> a, Func<string, int, (int, string)?> b) => Sequence(a, b, static (xa, xb) => xa + xb);
 
     extension(Func<string, int, (int, char)?>)
     {
