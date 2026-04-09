@@ -26,18 +26,15 @@ public class CalculationTest
     [Fact]
     public void MulTest()
     {
-        Func<string, int, (int, float)?> lazy_term_in = null!;
-        Func<string, int, (int, float)?> lazy_term = (input, start) => lazy_term_in(input, start);
-
-        Func<string, int, (int, float)?> lazy_expr_in = null!;
-        Func<string, int, (int, float)?> lazy_expr = (input, start) => lazy_expr_in(input, start);
+        var lazy_term = Combinator.Lazy<float>();
+        var lazy_expr = Combinator.Lazy<float>();
 
         var factor = Number;
-        var term = Combinator.Sequence([factor, Mul, lazy_term], xs => xs[0] * xs[2]) | factor;
-        var expr = Combinator.Sequence([term, Add, lazy_expr], xs => xs[0] + xs[2]) | term;
+        var term = Combinator.Sequence([factor, Mul, lazy_term.Func], xs => xs[0] * xs[2]) | factor;
+        var expr = Combinator.Sequence([term, Add, lazy_expr.Func], xs => xs[0] + xs[2]) | term;
 
-        lazy_term_in = term;
-        lazy_expr_in = expr;
+        lazy_term.LazyFunc = term;
+        lazy_expr.LazyFunc = expr;
 
         Assert.Equal(expr("1+2", 0)?.Item2, 3f);
         Assert.Equal(expr("3*4", 0)?.Item2, 12f);

@@ -159,6 +159,12 @@ public static class Combinator
         (start > 0 && input.Length > start && (char.IsAsciiLetterOrDigit(input[start]) || input[start] == '_') == (char.IsAsciiLetterOrDigit(input[start - 1]) || input[start - 1] == '_')) ? (0, "") : null;
 
     public static Func<string, int, (int, string)?> Create() => (input, start) => (0, "");
+    public static LazyParser<T> Lazy<T>()
+    {
+        var lazy = new LazyParser<T>();
+        lazy.Func = (input, start) => lazy.LazyFunc(input, start);
+        return lazy;
+    }
     public static Func<string, int, (int, string)?> Add(Func<string, int, (int, char)?> a, Func<string, int, (int, char)?> b) => Sequence(a, b, static (xa, xb) => $"{xa}{xb}");
     public static Func<string, int, (int, string)?> Add(Func<string, int, (int, char)?> a, Func<string, int, (int, string)?> b) => Add(Once(a, x => x.ToString()), b);
     public static Func<string, int, (int, string)?> Add(Func<string, int, (int, string)?> a, Func<string, int, (int, char)?> b) => Add(a, Once(b, x => x.ToString()));
