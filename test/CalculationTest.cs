@@ -20,9 +20,9 @@ public class CalculationTest
     {
         var parser = Combinator.Sequence([Spaces, Number, Spaces, Add, Spaces, Number], xs => xs[1] + xs[5]);
 
-        Assert.Equal(parser("1 + 2", 0)?.Item2, 3f);
-        Assert.Equal(parser("  2+3", 0)?.Item2, 5f);
-        Assert.Equal(parser("45 + 56", 0)?.Item2, 101f);
+        Assert.Equal(parser.Parse("1 + 2"), 3f);
+        Assert.Equal(parser.Parse("  2+3"), 5f);
+        Assert.Equal(parser.Parse("45 + 56"), 101f);
     }
 
     [Fact]
@@ -46,15 +46,15 @@ public class CalculationTest
         lazy_term.LazyFunc = term;
         lazy_expr.LazyFunc = expr;
 
-        Assert.Equal(expr(" 1 + 2", 0)?.Item2, 3f);
-        Assert.Equal(expr(" 3 * 4", 0)?.Item2, 12f);
-        Assert.Equal(expr(" 1 + 2 * 3 + 4", 0)?.Item2, 11f);
-        Assert.Equal(expr("1*2+3*4", 0)?.Item2, 14f);
+        Assert.Equal(expr.Parse(" 1 + 2"), 3f);
+        Assert.Equal(expr.Parse(" 3 * 4"), 12f);
+        Assert.Equal(expr.Parse(" 1 + 2 * 3 + 4"), 11f);
+        Assert.Equal(expr.Parse("1*2+3*4"), 14f);
 
-        Assert.Equal(expr(" 1 - 2", 0)?.Item2, -1f);
-        Assert.Equal(expr(" 2 / 4", 0)?.Item2, 0.5f);
-        Assert.Equal(expr(" 1 - 2 * 3 / 4", 0)?.Item2, -0.5f);
-        Assert.Equal(expr(" 1 * 2 - 3 * 4", 0)?.Item2, -10f);
-        Assert.Equal(expr(" ( 1 - 2 * 3 / 4 ) + 5", 0)?.Item2, 4.5f);
+        Assert.Equal(expr.Parse(" 1 - 2"), -1f);
+        Assert.Equal(expr.Parse(" 2 / 4"), 0.5f);
+        Assert.Equal(expr.Parse(" 1 - 2 * 3 / 4"), -0.5f);
+        Assert.Equal(expr.Parse(" 1 * 2 - 3 * 4"), -10f);
+        Assert.Equal(expr.Parse(" ( 1 - 2 * 3 / 4 ) + 5"), 4.5f);
     }
 }
