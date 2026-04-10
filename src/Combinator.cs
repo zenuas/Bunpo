@@ -198,12 +198,12 @@ public static class Combinator
         (input.Length == start && input.Length > 0 && !(char.IsAsciiLetterOrDigit(input[^1]) || input[^1] == '_')) ||
         (start > 0 && input.Length > start && (char.IsAsciiLetterOrDigit(input[start]) || input[start] == '_') == (char.IsAsciiLetterOrDigit(input[start - 1]) || input[start - 1] == '_')) ? (0, "") : null;
 
-    public static Func<string, int, (int, int)?> NumberInt32 = NaturalNumber<int>(Digit, (v, c, _) => v * 10 + (c - '0'));
-    public static Func<string, int, (int, long)?> NumberInt64 = NaturalNumber<long>(Digit, (v, c, _) => v * 10 + (c - '0'));
-    public static Func<string, int, (int, decimal)?> NumberDecimal = NaturalNumber<decimal>(Digit, (v, c, _) => v * 10 + (c - '0'));
-    public static Func<string, int, (int, float)?> NumberSingle = RealNumber<float>(Digit, (v, c, _) => v * 10 + (c - '0'), (v, c, i) => (float)(v + (c - '0') / Math.Pow(10, i)));
-    public static Func<string, int, (int, float)?> NumberFloat = NumberSingle;
-    public static Func<string, int, (int, double)?> NumberDouble = RealNumber<double>(Digit, (v, c, _) => v * 10 + (c - '0'), (v, c, i) => (v + (c - '0') / Math.Pow(10, i)));
+    public static readonly Func<string, int, (int, int)?> NumberInt32 = NaturalNumber<int>(Digit, (v, c, _) => v * 10 + (c - '0'));
+    public static readonly Func<string, int, (int, long)?> NumberInt64 = NaturalNumber<long>(Digit, (v, c, _) => v * 10 + (c - '0'));
+    public static readonly Func<string, int, (int, decimal)?> NumberDecimal = NaturalNumber<decimal>(Digit, (v, c, _) => v * 10 + (c - '0'));
+    public static readonly Func<string, int, (int, float)?> NumberSingle = RealNumber<float>(Digit, (v, c, _) => v * 10 + (c - '0'), (v, c, i) => (float)(v + (c - '0') / Math.Pow(10, i)));
+    public static readonly Func<string, int, (int, float)?> NumberFloat = NumberSingle;
+    public static readonly Func<string, int, (int, double)?> NumberDouble = RealNumber<double>(Digit, (v, c, _) => v * 10 + (c - '0'), (v, c, i) => (v + (c - '0') / Math.Pow(10, i)));
     public static Func<string, int, (int, T)?> NaturalNumber<T>(Func<string, int, (int, char)?> c, Func<T, char, int, T> match) => (input, start) =>
     {
         if (start < 0 || start > input.Length) return null;
