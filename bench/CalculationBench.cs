@@ -9,7 +9,7 @@ public class CalculationBench
     [Benchmark]
     public void BunpoSetupAndParse()
     {
-        var Number = Combinator.NumberFloat();
+        var Number = Combinator.NumberFloat;
 
         var Add = Combinator.Char('+');
         var Sub = Combinator.Char('-');

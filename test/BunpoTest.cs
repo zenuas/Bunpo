@@ -514,6 +514,83 @@ public class BunpoTest
     }
 
     [Fact]
+    public void NumberInt32Test()
+    {
+        Assert.Equal(Combinator.NumberInt32.Match(""), null);
+        Assert.Equal(Combinator.NumberInt32.Match("a"), null);
+        Assert.Equal(Combinator.NumberInt32.Match("0"), (0, 1, 0));
+        Assert.Equal(Combinator.NumberInt32.Match("1"), (0, 1, 1));
+        Assert.Equal(Combinator.NumberInt32.Match("2147483646"), (0, 10, 2147483646));
+        Assert.Equal(Combinator.NumberInt32.Match("2147483647"), (0, 10, int.MaxValue));
+        Assert.Equal(Combinator.NumberInt32.Match("2147483648"), (0, 10, -2147483648));
+    }
+
+    [Fact]
+    public void NumberInt64Test()
+    {
+        Assert.Equal(Combinator.NumberInt64.Match(""), null);
+        Assert.Equal(Combinator.NumberInt64.Match("a"), null);
+        Assert.Equal(Combinator.NumberInt64.Match("0"), (0, 1, 0));
+        Assert.Equal(Combinator.NumberInt64.Match("1"), (0, 1, 1));
+        Assert.Equal(Combinator.NumberInt64.Match("9223372036854775806"), (0, 19, 9223372036854775806));
+        Assert.Equal(Combinator.NumberInt64.Match("9223372036854775807"), (0, 19, long.MaxValue));
+        Assert.Equal(Combinator.NumberInt64.Match("9223372036854775808"), (0, 19, -9223372036854775808));
+    }
+
+    [Fact]
+    public void NumberDecimalTest()
+    {
+        Assert.Equal(Combinator.NumberDecimal.Match(""), null);
+        Assert.Equal(Combinator.NumberDecimal.Match("a"), null);
+        Assert.Equal(Combinator.NumberDecimal.Match("0"), (0, 1, 0));
+        Assert.Equal(Combinator.NumberDecimal.Match("1"), (0, 1, 1));
+        Assert.Equal(Combinator.NumberDecimal.Match("79228162514264337593543950334"), (0, 29, 79228162514264337593543950334m));
+        Assert.Equal(Combinator.NumberDecimal.Match("79228162514264337593543950335"), (0, 29, decimal.MaxValue));
+        Assert.Throws<OverflowException>(() => Combinator.NumberDecimal.Match("79228162514264337593543950336"));
+    }
+
+    [Fact]
+    public void NumberSingleTest()
+    {
+        Assert.Equal(Combinator.NumberSingle.Match(""), null);
+        Assert.Equal(Combinator.NumberSingle.Match("a"), null);
+        Assert.Equal(Combinator.NumberSingle.Match("0"), (0, 1, 0));
+        Assert.Equal(Combinator.NumberSingle.Match("1"), (0, 1, 1));
+        Assert.Equal(Combinator.NumberSingle.Match("340282246000000000000000000000000000000"), (0, 39, 3.40282246e38f));
+        Assert.Equal(Combinator.NumberSingle.Match("340282347000000000000000000000000000000"), (0, 39, float.MaxValue));
+        Assert.Equal(Combinator.NumberSingle.Match("0.5"), (0, 3, 0.5f));
+        Assert.Equal(Combinator.NumberSingle.Match("1.25"), (0, 4, 1.25f));
+        Assert.Equal(Combinator.NumberSingle.Match("123.125"), (0, 7, 123.125f));
+
+        Assert.Equal(Combinator.NumberFloat.Match(""), null);
+        Assert.Equal(Combinator.NumberFloat.Match("a"), null);
+        Assert.Equal(Combinator.NumberFloat.Match("0"), (0, 1, 0f));
+        Assert.Equal(Combinator.NumberFloat.Match("1"), (0, 1, 1f));
+        Assert.Equal(Combinator.NumberFloat.Match("340282246000000000000000000000000000000"), (0, 39, 3.40282246e38f));
+        Assert.Equal(Combinator.NumberFloat.Match("340282347000000000000000000000000000000"), (0, 39, float.MaxValue));
+        Assert.Equal(Combinator.NumberFloat.Match("0.5"), (0, 3, 0.5f));
+        Assert.Equal(Combinator.NumberFloat.Match("1.25"), (0, 4, 1.25f));
+        Assert.Equal(Combinator.NumberFloat.Match("123.125"), (0, 7, 123.125f));
+        Assert.Equal(Combinator.NumberFloat.Match("123."), (0, 4, 123f));
+        Assert.Equal(Combinator.NumberFloat.Match("123.x"), (0, 4, 123f));
+    }
+
+    [Fact]
+    public void NumberDoubleTest()
+    {
+        Assert.Equal(Combinator.NumberDouble.Match(""), null);
+        Assert.Equal(Combinator.NumberDouble.Match("a"), null);
+        Assert.Equal(Combinator.NumberDouble.Match("0"), (0, 1, 0d));
+        Assert.Equal(Combinator.NumberDouble.Match("1"), (0, 1, 1d));
+        Assert.Equal(Combinator.NumberDouble.Match("179769313486231620000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"), (0, 309, 1.7976931348623145e308));
+        Assert.Equal(Combinator.NumberDouble.Match("0.5"), (0, 3, 0.5d));
+        Assert.Equal(Combinator.NumberDouble.Match("1.25"), (0, 4, 1.25d));
+        Assert.Equal(Combinator.NumberDouble.Match("123.125"), (0, 7, 123.125d));
+        Assert.Equal(Combinator.NumberDouble.Match("123."), (0, 4, 123d));
+        Assert.Equal(Combinator.NumberDouble.Match("123.x"), (0, 4, 123d));
+    }
+
+    [Fact]
     public void Sample1()
     {
         // README.md Usage Sample

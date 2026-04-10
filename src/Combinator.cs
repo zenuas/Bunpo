@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Numerics;
 
 namespace Bunpo;
 
@@ -20,29 +21,6 @@ public static class Combinator
     public static Func<string, int, (int, R)?> Once<T, R>(Func<string, int, (int, T)?> once, Func<T, R> match) => (input, start) => once(input, start) is { } p ? (p.Item1, match(p.Item2)) : null;
     public static Func<string, int, (int, R)?> None<T, R>(Func<string, int, (int, T)?> f) => Once<T, R>(f, _ => default!);
     public static Func<string, int, (int, T?)?> Option<T>(Func<string, int, (int, T)?> once) => (input, start) => input.Length < start || start < 0 ? null : once(input, start) is { } p ? p : (0, default);
-
-    public static Func<string, int, (int, int)?> NumberInt32() => Number<int>(Digit, (v, c) => v * 10 + (c - '0'));
-    public static Func<string, int, (int, long)?> NumberInt64() => Number<long>(Digit, (v, c) => v * 10 + (c - '0'));
-    public static Func<string, int, (int, decimal)?> NumberDecimal() => Number<decimal>(Digit, (v, c) => v * 10 + (c - '0'));
-    public static Func<string, int, (int, float)?> NumberSingle() => Number<float>(Digit, (v, c) => v * 10 + (c - '0'));
-    public static Func<string, int, (int, float)?> NumberFloat() => NumberSingle();
-    public static Func<string, int, (int, double)?> NumberDouble() => Number<double>(Digit, (v, c) => v * 10 + (c - '0'));
-    public static Func<string, int, (int, T)?> Number<T>(Func<string, int, (int, char)?> c, Func<T, char, T> match) => (input, start) =>
-    {
-        if (start < 0 || start > input.Length) return null;
-        var first = c(input, start);
-        if (first is null) return null;
-        var length = first.Value.Item1;
-        T value = match(default!, first.Value.Item2);
-        while (true)
-        {
-            var result = c(input, start + length);
-            if (result is null) break;
-            length += result.Value.Item1;
-            value = match(value, result.Value.Item2);
-        }
-        return (length, value);
-    };
 
     public static Func<string, int, (int, T?)?> Many<T>(Func<string, int, (int, T)?> many) => Many(many, static xs => xs.LastOrDefault());
     public static Func<string, int, (int, R)?> Many<T, R>(Func<string, int, (int, T)?> many, Func<IReadOnlyList<T>, R> match) => (input, start) =>
@@ -219,6 +197,44 @@ public static class Combinator
         (start == 0 && input.Length > 0 && !(char.IsAsciiLetterOrDigit(input[0]) || input[0] == '_')) ||
         (input.Length == start && input.Length > 0 && !(char.IsAsciiLetterOrDigit(input[^1]) || input[^1] == '_')) ||
         (start > 0 && input.Length > start && (char.IsAsciiLetterOrDigit(input[start]) || input[start] == '_') == (char.IsAsciiLetterOrDigit(input[start - 1]) || input[start - 1] == '_')) ? (0, "") : null;
+
+    public static Func<string, int, (int, int)?> NumberInt32 = NaturalNumber<int>(Digit, (v, c, _) => v * 10 + (c - '0'));
+    public static Func<string, int, (int, long)?> NumberInt64 = NaturalNumber<long>(Digit, (v, c, _) => v * 10 + (c - '0'));
+    public static Func<string, int, (int, decimal)?> NumberDecimal = NaturalNumber<decimal>(Digit, (v, c, _) => v * 10 + (c - '0'));
+    public static Func<string, int, (int, float)?> NumberSingle = RealNumber<float>(Digit, (v, c, _) => v * 10 + (c - '0'), (v, c, i) => (float)(v + (c - '0') / Math.Pow(10, i)));
+    public static Func<string, int, (int, float)?> NumberFloat = NumberSingle;
+    public static Func<string, int, (int, double)?> NumberDouble = RealNumber<double>(Digit, (v, c, _) => v * 10 + (c - '0'), (v, c, i) => (v + (c - '0') / Math.Pow(10, i)));
+    public static Func<string, int, (int, T)?> NaturalNumber<T>(Func<string, int, (int, char)?> c, Func<T, char, int, T> match) => (input, start) =>
+    {
+        if (start < 0 || start > input.Length) return null;
+        var first = c(input, start);
+        if (first is null) return null;
+        var length = first.Value.Item1;
+        var i = 1;
+        T value = match(default!, first.Value.Item2, i++);
+        while (true)
+        {
+            var result = c(input, start + length);
+            if (result is null) break;
+            length += result.Value.Item1;
+            value = match(value, result.Value.Item2, i++);
+        }
+        return (length, value);
+    };
+    public static Func<string, int, (int, T)?> RealNumber<T>(Func<string, int, (int, char)?> c, Func<T, char, int, T> int_match, Func<T, char, int, T> dec_match) where T : IAdditionOperators<T, T, T>
+    {
+        return (input, start) =>
+        {
+            if (start < 0 || start > input.Length) return null;
+            var integer = NaturalNumber<T>(c, int_match)(input, start);
+            if (integer is null) return null;
+            var point = Char('.')(input, start + integer.Value.Item1);
+            if (point is null) return integer;
+            var fractional = NaturalNumber<T>(c, dec_match)(input, start + integer.Value.Item1 + point.Value.Item1);
+            if (fractional is null) return (integer.Value.Item1 + point.Value.Item1, integer.Value.Item2);
+            return (integer.Value.Item1 + point.Value.Item1 + fractional.Value.Item1, integer.Value.Item2 + fractional.Value.Item2);
+        };
+    }
 
     public static Func<string, int, (int, T)?> Lazy<T>(Func<Func<string, int, (int, T)?>> f) => (input, start) => f()(input, start);
     public static Func<string, int, (int, string)?> Add(Func<string, int, (int, char)?> a, Func<string, int, (int, char)?> b) => Sequence(a, b, static (xa, xb) => $"{xa}{xb}");
