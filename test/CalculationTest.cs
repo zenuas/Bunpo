@@ -1,24 +1,23 @@
 ﻿using Xunit;
 using Parser = System.Func<string, int, (int, float)?>;
-using ParserChar = System.Func<string, int, (int, char)?>;
 
 namespace Bunpo.Test;
 
 public class CalculationTest
 {
-    public static Parser Number = Combinator.Digits.ToOnce(float.Parse);
-    public static ParserChar Spaces = Combinator.Spaces.ToOption().ToOnce(_ => ' ');
-
-    public static ParserChar Add = Combinator.Char('+');
-    public static ParserChar Sub = Combinator.Char('-');
-    public static ParserChar Mul = Combinator.Char('*');
-    public static ParserChar Div = Combinator.Char('/');
-    public static ParserChar LParen = Combinator.Char('(');
-    public static ParserChar RParen = Combinator.Char(')');
-
     [Fact]
     public void CalcTest()
     {
+        var Number = Combinator.Digits.ToOnce(float.Parse);
+        var Spaces = Combinator.Spaces.ToOption().ToOnce(_ => ' ');
+
+        var Add = Combinator.Char('+');
+        var Sub = Combinator.Char('-');
+        var Mul = Combinator.Char('*');
+        var Div = Combinator.Char('/');
+        var LParen = Combinator.Char('(');
+        var RParen = Combinator.Char(')');
+
         Parser expr = null!;
 
         var factor =
