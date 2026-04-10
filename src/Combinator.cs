@@ -84,6 +84,27 @@ public static class Combinator
         };
     }
 
+    public static Func<string, int, (int, T)?> ChainLeft<T, TOpe>(Func<string, int, (int, T)?> chain, Func<string, int, (int, TOpe)?> op, Func<T, TOpe, T, T> match) => (input, start) =>
+    {
+        if (start < 0 || start > input.Length) return null;
+        var first = chain(input, start);
+        if (first is null) return null;
+
+        var length = first.Value.Item1;
+        var left = first.Value.Item2;
+        while (true)
+        {
+            var opr = op(input, start + length);
+            if (opr is null) break;
+            length += opr.Value.Item1;
+            var right = chain(input, start + length);
+            if (right is null) break;
+            length += right.Value.Item1;
+            left = match(left, opr.Value.Item2, right.Value.Item2);
+        }
+        return (length, left);
+    };
+
     public static Func<string, int, (int, T2)?> Sequence<T1, T2>(Func<string, int, (int, T1)?> a, Func<string, int, (int, T2)?> b) => Sequence(a, b, static (_, xb) => xb);
     public static Func<string, int, (int, R)?> Sequence<T1, T2, R>(Func<string, int, (int, T1)?> a, Func<string, int, (int, T2)?> b, Func<T1, T2, R> match) => (input, start) =>
     {
@@ -190,13 +211,13 @@ public static class Combinator
         public Func<string, int, (int, T[])?> ToMany() => Many(self, xs => xs.ToArray());
         public Func<string, int, (int, T[])?> ToMany1() => Many1(self, xs => xs.ToArray());
         public Func<string, int, (int, T[])?> ToMany(uint min, uint max) => Many(self, min, max, xs => xs.ToArray());
-        public T Parse(string s, int start = 0) => self.Match(s, start) is { } p ? p.Value : throw new("Parser execution failed.");
+        public T Parse(string s, int start = 0) => self(s, start) is { } p ? p.Item2 : throw new("Parser execution failed.");
         public bool TryParse(string s, out T result) => self.TryParse(s, 0, out result!);
         public bool TryParse(string s, int start, [MaybeNullWhen(false)] out T result)
         {
-            if (self.Match(s, start) is { } p)
+            if (self(s, start) is { } p)
             {
-                result = p.Value;
+                result = p.Item2;
                 return true;
             }
             result = default!;
