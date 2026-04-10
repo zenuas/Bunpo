@@ -1,4 +1,5 @@
-﻿using Xunit;
+﻿using System;
+using Xunit;
 using Parser = System.Func<string, int, (int, float)?>;
 using ParserChar = System.Func<string, int, (int, char)?>;
 
@@ -19,15 +20,14 @@ public class CalculationTest
     [Fact]
     public void CalcTest()
     {
-        var lazy_expr = Combinator.Lazy<float>();
+        Func<string, int, (int, float)?> expr = null!;
+        var lazy_expr = Combinator.Lazy(expr);
 
         var factor =
             Combinator.None<char, float>(Spaces) ^ Number |
-            Combinator.None<char, float>(Spaces) ^ Combinator.Sequence([Combinator.None<char, float>(LParen), lazy_expr.Func, Combinator.None<char, float>(Spaces), Combinator.None<char, float>(RParen)], xs => xs[1]);
+            Combinator.None<char, float>(Spaces) ^ Combinator.Sequence([Combinator.None<char, float>(LParen), lazy_expr, Combinator.None<char, float>(Spaces), Combinator.None<char, float>(RParen)], xs => xs[1]);
         var term = Combinator.ChainLeft(factor, Spaces ^ (Mul | Div), (left, op, right) => op == '*' ? left * right : left / right);
-        var expr = Combinator.ChainLeft(term, Spaces ^ (Add | Sub), (left, op, right) => op == '+' ? left + right : left - right);
-
-        lazy_expr.LazyFunc = expr;
+        expr = Combinator.ChainLeft(term, Spaces ^ (Add | Sub), (left, op, right) => op == '+' ? left + right : left - right);
 
         Assert.Equal(expr.Parse(" 1 + 2"), 3f);
         Assert.Equal(expr.Parse(" 3 * 4"), 12f);

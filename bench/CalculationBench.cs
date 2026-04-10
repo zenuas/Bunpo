@@ -1,5 +1,6 @@
 ﻿using BenchmarkDotNet.Attributes;
 using Sprache;
+using System;
 
 namespace Bunpo.Benchmark;
 
@@ -18,15 +19,14 @@ public class CalculationBench
         var LParen = Combinator.Char('(');
         var RParen = Combinator.Char(')');
 
-        var lazy_expr = Combinator.Lazy<float>();
+        Func<string, int, (int, float)?> expr = null!;
+        var lazy_expr = Combinator.Lazy(expr);
 
         var factor =
             Combinator.None<char, float>(Spaces) ^ Number |
-            Combinator.None<char, float>(Spaces) ^ Combinator.Sequence([Combinator.None<char, float>(LParen), lazy_expr.Func, Combinator.None<char, float>(Spaces), Combinator.None<char, float>(RParen)], xs => xs[1]);
+            Combinator.None<char, float>(Spaces) ^ Combinator.Sequence([Combinator.None<char, float>(LParen), lazy_expr, Combinator.None<char, float>(Spaces), Combinator.None<char, float>(RParen)], xs => xs[1]);
         var term = Combinator.ChainLeft(factor, Spaces ^ (Mul | Div), (left, op, right) => op == '*' ? left * right : left / right);
-        var expr = Combinator.ChainLeft(term, Spaces ^ (Add | Sub), (left, op, right) => op == '+' ? left + right : left - right);
-
-        lazy_expr.LazyFunc = expr;
+        expr = Combinator.ChainLeft(term, Spaces ^ (Add | Sub), (left, op, right) => op == '+' ? left + right : left - right);
 
         var result = expr.Parse("1-2*3/4+5");
         if (result != 4.5f) throw new("");

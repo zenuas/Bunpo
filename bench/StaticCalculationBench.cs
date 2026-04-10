@@ -27,15 +27,15 @@ public class StaticCalculationBench
         var LParen = Combinator.Char('(');
         var RParen = Combinator.Char(')');
 
-        var lazy_expr = Combinator.Lazy<float>();
+        Func<string, int, (int, float)?> expr = null!;
+        var lazy_expr = Combinator.Lazy(expr);
 
         var factor =
             Number |
-            Combinator.Sequence([Combinator.None<char, float>(LParen), lazy_expr.Func, Combinator.None<char, float>(RParen)], xs => xs[1]);
+            Combinator.Sequence([Combinator.None<char, float>(LParen), lazy_expr, Combinator.None<char, float>(RParen)], xs => xs[1]);
         var term = Combinator.ChainLeft(factor, Mul | Div, (left, op, right) => op == '*' ? left * right : left / right);
-        var expr = Combinator.ChainLeft(term, Add | Sub, (left, op, right) => op == '+' ? left + right : left - right);
+        expr = Combinator.ChainLeft(term, Add | Sub, (left, op, right) => op == '+' ? left + right : left - right);
 
-        lazy_expr.LazyFunc = expr;
         return expr;
     }
 
