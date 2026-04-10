@@ -19,11 +19,10 @@ public class CalculationBench
         var RParen = Combinator.Char(')');
 
         Func<string, int, (int, float)?> expr = null!;
-        var lazy_expr = Combinator.Lazy(expr);
 
         var factor =
             Number |
-            Combinator.Sequence([Combinator.None<char, float>(LParen), lazy_expr, Combinator.None<char, float>(RParen)], xs => xs[1]);
+            Combinator.Sequence([Combinator.None<char, float>(LParen), Combinator.Lazy(expr), Combinator.None<char, float>(RParen)], xs => xs[1]);
         var term = Combinator.ChainLeft(factor, Mul | Div, (left, op, right) => op == '*' ? left * right : left / right);
         expr = Combinator.ChainLeft(term, Add | Sub, (left, op, right) => op == '+' ? left + right : left - right);
 
