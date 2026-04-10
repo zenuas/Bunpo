@@ -188,26 +188,30 @@ public static class Combinator
     public static Func<string, int, (int, string)?> Add(Func<string, int, (int, string)?> a, Func<string, int, (int, char)?> b) => Add(a, Once(b, x => x.ToString()));
     public static Func<string, int, (int, string)?> Add(Func<string, int, (int, string)?> a, Func<string, int, (int, string)?> b) => Sequence(a, b, static (xa, xb) => xa + xb);
 
-    extension(Func<string, int, (int, char)?>)
+    extension(Func<string, int, (int, char)?> self)
     {
         public static Func<string, int, (int, string)?> operator &(Func<string, int, (int, char)?> a, Func<string, int, (int, char)?> b) => Add(a, b);
         public static Func<string, int, (int, string)?> operator &(Func<string, int, (int, char)?> a, Func<string, int, (int, string)?> b) => Add(a, b);
         public static Func<string, int, (int, string)?> operator &(Func<string, int, (int, char)?> a, char b) => Add(a, Char(b));
         public static Func<string, int, (int, string)?> operator &(Func<string, int, (int, char)?> a, string b) => Add(a, String(b));
         public static Func<string, int, (int, string)?> operator &(Func<string, int, (int, char)?> a, char[] b) => Add(a, CharClass(b));
+        public Func<string, int, (int, R)?> ToNone<R>() => None<char, R>(self);
     }
-    extension(Func<string, int, (int, string)?>)
+    extension(Func<string, int, (int, string)?> self)
     {
         public static Func<string, int, (int, string)?> operator &(Func<string, int, (int, string)?> a, Func<string, int, (int, char)?> b) => Add(a, b);
         public static Func<string, int, (int, string)?> operator &(Func<string, int, (int, string)?> a, Func<string, int, (int, string)?> b) => Add(a, b);
         public static Func<string, int, (int, string)?> operator &(Func<string, int, (int, string)?> a, char b) => Add(a, Char(b));
         public static Func<string, int, (int, string)?> operator &(Func<string, int, (int, string)?> a, string b) => Add(a, String(b));
         public static Func<string, int, (int, string)?> operator &(Func<string, int, (int, string)?> a, char[] b) => Add(a, CharClass(b));
+        public Func<string, int, (int, R)?> ToNone<R>() => None<string, R>(self);
     }
     extension<T>(Func<string, int, (int, T)?> self)
     {
         public static Func<string, int, (int, T)?> operator ^(Func<string, int, (int, T)?> a, Func<string, int, (int, T)?> b) => Sequence([a, b], static xs => xs.Last());
         public static Func<string, int, (int, T)?> operator |(Func<string, int, (int, T)?> a, Func<string, int, (int, T)?> b) => Choice(a, b);
+        public Func<string, int, (int, R)?> ToOnce<R>(Func<T, R> match) => Once(self, match);
+        public Func<string, int, (int, R)?> ToNone<R>() => None<T, R>(self);
         public Func<string, int, (int, T?)?> ToOption() => Option(self);
         public Func<string, int, (int, T[])?> ToMany() => Many(self, xs => xs.ToArray());
         public Func<string, int, (int, T[])?> ToMany1() => Many1(self, xs => xs.ToArray());

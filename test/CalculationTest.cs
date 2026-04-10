@@ -1,5 +1,4 @@
-﻿using System;
-using Xunit;
+﻿using Xunit;
 using Parser = System.Func<string, int, (int, float)?>;
 using ParserChar = System.Func<string, int, (int, char)?>;
 
@@ -7,8 +6,8 @@ namespace Bunpo.Test;
 
 public class CalculationTest
 {
-    public static Parser Number = Combinator.Once(Combinator.Digits, float.Parse);
-    public static ParserChar Spaces = Combinator.Once(Combinator.Spaces.ToOption(), _ => ' ');
+    public static Parser Number = Combinator.Digits.ToOnce(float.Parse);
+    public static ParserChar Spaces = Combinator.Spaces.ToOption().ToOnce(_ => ' ');
 
     public static ParserChar Add = Combinator.Char('+');
     public static ParserChar Sub = Combinator.Char('-');
@@ -20,12 +19,12 @@ public class CalculationTest
     [Fact]
     public void CalcTest()
     {
-        Func<string, int, (int, float)?> expr = null!;
+        Parser expr = null!;
         var lazy_expr = Combinator.Lazy(expr);
 
         var factor =
-            Combinator.None<char, float>(Spaces) ^ Number |
-            Combinator.None<char, float>(Spaces) ^ Combinator.Sequence([Combinator.None<char, float>(LParen), lazy_expr, Combinator.None<char, float>(Spaces), Combinator.None<char, float>(RParen)], xs => xs[1]);
+            Spaces.ToNone<float>() ^ Number |
+            Spaces.ToNone<float>() ^ Combinator.Sequence([LParen.ToNone<float>(), lazy_expr, Spaces.ToNone<float>(), RParen.ToNone<float>()], xs => xs[1]);
         var term = Combinator.ChainLeft(factor, Spaces ^ (Mul | Div), (left, op, right) => op == '*' ? left * right : left / right);
         expr = Combinator.ChainLeft(term, Spaces ^ (Add | Sub), (left, op, right) => op == '+' ? left + right : left - right);
 
