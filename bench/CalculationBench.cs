@@ -1,6 +1,5 @@
 ﻿using BenchmarkDotNet.Attributes;
 using Sprache;
-using System;
 
 namespace Bunpo.Benchmark;
 
@@ -19,13 +18,11 @@ public class CalculationBench
         var LParen = Combinator.Char('(');
         var RParen = Combinator.Char(')');
 
-        Func<Func<string, int, (int, char)?>, Func<string, int, (int, float)?>> none = c => Combinator.Once(c, _ => 0f);
-
         var lazy_expr = Combinator.Lazy<float>();
 
         var factor =
-            none(Spaces) ^ Number |
-            none(Spaces) ^ Combinator.Sequence([none(LParen), lazy_expr.Func, none(Spaces), none(RParen)], xs => xs[1]);
+            Combinator.None<char, float>(Spaces) ^ Number |
+            Combinator.None<char, float>(Spaces) ^ Combinator.Sequence([Combinator.None<char, float>(LParen), lazy_expr.Func, Combinator.None<char, float>(Spaces), Combinator.None<char, float>(RParen)], xs => xs[1]);
         var term = Combinator.ChainLeft(factor, Spaces ^ (Mul | Div), (left, op, right) => op == '*' ? left * right : left / right);
         var expr = Combinator.ChainLeft(term, Spaces ^ (Add | Sub), (left, op, right) => op == '+' ? left + right : left - right);
 

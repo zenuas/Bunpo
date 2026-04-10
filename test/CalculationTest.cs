@@ -1,5 +1,4 @@
-﻿using System;
-using Xunit;
+﻿using Xunit;
 using Parser = System.Func<string, int, (int, float)?>;
 using ParserChar = System.Func<string, int, (int, char)?>;
 
@@ -20,13 +19,11 @@ public class CalculationTest
     [Fact]
     public void CalcTest()
     {
-        Func<ParserChar, Parser> none = c => Combinator.Once(c, _ => 0f);
-
         var lazy_expr = Combinator.Lazy<float>();
 
         var factor =
-            none(Spaces) ^ Number |
-            none(Spaces) ^ Combinator.Sequence([none(LParen), lazy_expr.Func, none(Spaces), none(RParen)], xs => xs[1]);
+            Combinator.None<char, float>(Spaces) ^ Number |
+            Combinator.None<char, float>(Spaces) ^ Combinator.Sequence([Combinator.None<char, float>(LParen), lazy_expr.Func, Combinator.None<char, float>(Spaces), Combinator.None<char, float>(RParen)], xs => xs[1]);
         var term = Combinator.ChainLeft(factor, Spaces ^ (Mul | Div), (left, op, right) => op == '*' ? left * right : left / right);
         var expr = Combinator.ChainLeft(term, Spaces ^ (Add | Sub), (left, op, right) => op == '+' ? left + right : left - right);
 
