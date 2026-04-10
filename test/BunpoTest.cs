@@ -60,6 +60,10 @@ public class BunpoTest
         Assert.Throws<ArgumentOutOfRangeException>(() => Combinator.End.Match("", -1));
         Assert.Equal(Combinator.End("", -1), null);
         Assert.Equal(Combinator.End.Match("", 1), null);
+
+        Assert.Throws<ArgumentOutOfRangeException>(() => Combinator.ZeroWidth((input, start) => (false, "")).Match("", -1));
+        Assert.Equal(Combinator.ZeroWidth((input, start) => (false, ""))("", -1), null);
+        Assert.Equal(Combinator.ZeroWidth((input, start) => (false, "")).Match("", 1), null);
     }
 
     [Fact]
