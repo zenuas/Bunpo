@@ -21,6 +21,29 @@ public static class Combinator
     public static Func<string, int, (int, R)?> None<T, R>(Func<string, int, (int, T)?> f) => Once<T, R>(f, _ => default!);
     public static Func<string, int, (int, T?)?> Option<T>(Func<string, int, (int, T)?> once) => (input, start) => input.Length < start || start < 0 ? null : once(input, start) is { } p ? p : (0, default);
 
+    public static Func<string, int, (int, int)?> NumberInt32() => Number<int>(Digit, (v, c) => v * 10 + (c - '0'));
+    public static Func<string, int, (int, long)?> NumberInt64() => Number<long>(Digit, (v, c) => v * 10 + (c - '0'));
+    public static Func<string, int, (int, decimal)?> NumberDecimal() => Number<decimal>(Digit, (v, c) => v * 10 + (c - '0'));
+    public static Func<string, int, (int, float)?> NumberSingle() => Number<float>(Digit, (v, c) => v * 10 + (c - '0'));
+    public static Func<string, int, (int, float)?> NumberFloat() => NumberSingle();
+    public static Func<string, int, (int, double)?> NumberDouble() => Number<double>(Digit, (v, c) => v * 10 + (c - '0'));
+    public static Func<string, int, (int, T)?> Number<T>(Func<string, int, (int, char)?> c, Func<T, char, T> match) => (input, start) =>
+    {
+        if (start < 0 || start > input.Length) return null;
+        var first = c(input, start);
+        if (first is null) return null;
+        var length = first.Value.Item1;
+        T value = match(default!, first.Value.Item2);
+        while (true)
+        {
+            var result = c(input, start + length);
+            if (result is null) break;
+            length += result.Value.Item1;
+            value = match(value, result.Value.Item2);
+        }
+        return (length, value);
+    };
+
     public static Func<string, int, (int, T?)?> Many<T>(Func<string, int, (int, T)?> many) => Many(many, static xs => xs.LastOrDefault());
     public static Func<string, int, (int, R)?> Many<T, R>(Func<string, int, (int, T)?> many, Func<IReadOnlyList<T>, R> match) => (input, start) =>
     {

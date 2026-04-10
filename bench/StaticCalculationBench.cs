@@ -25,7 +25,7 @@ public class StaticCalculationBench
     [Benchmark]
     public Func<string, int, (int, double)?> BunpoSetup()
     {
-        var Number = Combinator.Digits.ToOnce(double.Parse);
+        var Number = Combinator.NumberDouble();
 
         var Add = Combinator.Char('+');
         var Sub = Combinator.Char('-');

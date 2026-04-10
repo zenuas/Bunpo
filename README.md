@@ -41,17 +41,17 @@ This is a benchmark for Four arithmetic operations parser setup and parser execu
 The parser compared formulas with 5 numbers and formulas with 300 numbers.  
 
 Four arithmetic operations benchmark:  
-| Method          | Mean         | Error       | StdDev      | Gen0     | Gen1   | Allocated |
-|---------------- |-------------:|------------:|------------:|---------:|-------:|----------:|
-| BunpoSetup      |     113.0 ns |     1.71 ns |     1.51 ns |   0.1301 | 0.0007 |    1632 B |
-| Bunpo5Parse     |     262.9 ns |     3.58 ns |     2.99 ns |   0.0577 |      - |     728 B |
-| Bunpo300Parse   |  18,373.6 ns |   364.95 ns |   341.38 ns |   3.6011 |      - |   45360 B |
-| FParseSetup     |     443.8 ns |     4.48 ns |     3.74 ns |   0.4964 | 0.0110 |    6232 B |
-| FParse5Parse    |     272.8 ns |     3.04 ns |     2.84 ns |   0.0324 |      - |     408 B |
-| FParse300Parse  |  16,870.5 ns |   265.66 ns |   248.50 ns |   1.6479 |      - |   20968 B |
-| SpracheSetup    |     167.1 ns |     2.55 ns |     2.13 ns |   0.1931 | 0.0017 |    2424 B |
-| Sprache5Parse   |   6,075.0 ns |    73.93 ns |    61.74 ns |   3.4332 | 0.0458 |   43144 B |
-| Sprache300Parse | 396,664.4 ns | 7,665.94 ns | 9,125.76 ns | 209.9609 | 7.8125 | 2638784 B |
+| Method          | Mean          | Error        | StdDev       | Gen0     | Gen1   | Allocated |
+|---------------- |--------------:|-------------:|-------------:|---------:|-------:|----------:|
+| BunpoSetup      |     113.91 ns |     1.914 ns |     1.697 ns |   0.1274 | 0.0007 |    1600 B |
+| Bunpo5Parse     |      79.79 ns |     1.348 ns |     1.261 ns |        - |      - |         - |
+| Bunpo300Parse   |   5,162.57 ns |    77.373 ns |    72.374 ns |        - |      - |         - |
+| FParseSetup     |     448.28 ns |     5.402 ns |     4.511 ns |   0.4959 | 0.0105 |    6232 B |
+| FParse5Parse    |     276.17 ns |     2.908 ns |     2.720 ns |   0.0324 |      - |     408 B |
+| FParse300Parse  |  16,797.90 ns |   201.356 ns |   178.496 ns |   1.6479 |      - |   20968 B |
+| SpracheSetup    |     164.69 ns |     3.281 ns |     2.908 ns |   0.1931 | 0.0017 |    2424 B |
+| Sprache5Parse   |   6,145.05 ns |    93.162 ns |    82.586 ns |   3.4332 | 0.0458 |   43144 B |
+| Sprache300Parse | 384,084.63 ns | 7,396.391 ns | 7,264.245 ns | 209.9609 | 7.8125 | 2634944 B |
 
 FParsec.CSharp version 12.6.0(FParsec version 2.0.0-beta2) used.  
 Sprache version 2.3.1 used.  
