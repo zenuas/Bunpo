@@ -500,4 +500,26 @@ public class BunpoTest
         Assert.Equal(Combinator.Add(left, Combinator.Char('b')).Match("xaby"), (1, 2, "ab"));
         Assert.Equal(Combinator.Add(left, Combinator.String("b")).Match("xaby"), (1, 2, "ab"));
     }
+
+    [Fact]
+    public void Sample1()
+    {
+        // README.md Usage Sample
+        var parser = Combinator.Char('a');
+        _ = parser.Match("abc123xyz"); //=> (0, 1, 'a')
+
+        Assert.Equal(parser.Match("abc123xyz"), (0, 1, 'a'));
+    }
+
+    [Fact]
+    public void Sample2()
+    {
+        // README.md Usage Sample
+        var parser = Combinator.String("ab")
+            & Combinator.AnyChar
+            & Combinator.Chars(Combinator.Digit);
+        _ = parser.Match("abc123xyz"); //=> (0, 6, "abc123")
+
+        Assert.Equal(parser.Match("abc123xyz"), (0, 6, "abc123"));
+    }
 }
