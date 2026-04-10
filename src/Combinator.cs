@@ -190,7 +190,7 @@ public static class Combinator
         public Func<string, int, (int, T[])?> ToMany() => Many(self, xs => xs.ToArray());
         public Func<string, int, (int, T[])?> ToMany1() => Many1(self, xs => xs.ToArray());
         public Func<string, int, (int, T[])?> ToMany(uint min, uint max) => Many(self, min, max, xs => xs.ToArray());
-        public T Parse(string s, int start = 0) => self.Match(s, start) is { } p ? p.Value : throw new();
+        public T Parse(string s, int start = 0) => self.Match(s, start) is { } p ? p.Value : throw new("Parser execution failed.");
         public bool TryParse(string s, out T result) => self.TryParse(s, 0, out result!);
         public bool TryParse(string s, int start, [MaybeNullWhen(false)] out T result)
         {
