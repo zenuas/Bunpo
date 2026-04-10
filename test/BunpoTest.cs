@@ -420,4 +420,34 @@ public class BunpoTest
         Assert.Equal(Combinator.Start.Match("\r\n", 1), null);
         Assert.Equal(Combinator.Start.Match("\r\n", 2), null);
     }
+
+    [Fact]
+    public void OperatorCharTest()
+    {
+        var left = Combinator.Char('a');
+
+        Assert.Equal((left & Combinator.Char('b')).Match("xaby"), (1, 2, "ab"));
+        Assert.Equal((left & Combinator.String("b")).Match("xaby"), (1, 2, "ab"));
+        Assert.Equal((left & 'b').Match("xaby"), (1, 2, "ab"));
+        Assert.Equal((left & "b").Match("xaby"), (1, 2, "ab"));
+        Assert.Equal((left & ['b', 'c']).Match("xaby"), (1, 2, "ab"));
+
+        Assert.Equal(Combinator.Add(left, Combinator.Char('b')).Match("xaby"), (1, 2, "ab"));
+        Assert.Equal(Combinator.Add(left, Combinator.String("b")).Match("xaby"), (1, 2, "ab"));
+    }
+
+    [Fact]
+    public void OperatorStringTest()
+    {
+        var left = Combinator.String("a");
+
+        Assert.Equal((left & Combinator.Char('b')).Match("xaby"), (1, 2, "ab"));
+        Assert.Equal((left & Combinator.String("b")).Match("xaby"), (1, 2, "ab"));
+        Assert.Equal((left & 'b').Match("xaby"), (1, 2, "ab"));
+        Assert.Equal((left & "b").Match("xaby"), (1, 2, "ab"));
+        Assert.Equal((left & ['b', 'c']).Match("xaby"), (1, 2, "ab"));
+
+        Assert.Equal(Combinator.Add(left, Combinator.Char('b')).Match("xaby"), (1, 2, "ab"));
+        Assert.Equal(Combinator.Add(left, Combinator.String("b")).Match("xaby"), (1, 2, "ab"));
+    }
 }
