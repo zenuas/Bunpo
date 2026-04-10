@@ -286,6 +286,16 @@ public class BunpoTest
     }
 
     [Fact]
+    public void ZeroWidthTest()
+    {
+        Assert.Equal(Combinator.ZeroWidth((input, start) => (false, "")).Match(""), null);
+        Assert.Equal(Combinator.ZeroWidth((input, start) => (true, "xx")).Match(""), (0, 0, "xx"));
+
+        Assert.Equal(Combinator.ZeroWidth((input, start) => start < input.Length && input[start] == 'z' ? (true, "z") : (false, "")).Match("xaby"), null);
+        Assert.Equal(Combinator.ZeroWidth((input, start) => start < input.Length && input[start] == 'b' ? (true, "z") : (false, "")).Match("xaby"), (2, 0, "z"));
+    }
+
+    [Fact]
     public void OperatorTest()
     {
         var a = Combinator.Char('a');
