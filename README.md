@@ -56,6 +56,11 @@ Four arithmetic operations benchmark:
 FParsec.CSharp version 12.6.0(FParsec version 2.0.0-beta2) used.  
 Sprache version 2.3.1 used.  
 
+## Installation
+
+* [NuGet](https://www.nuget.org/packages/Bunpo/)  
+  dotnet add package Bunpo  
+
 ## Requirement
 
 * .NET 10  
