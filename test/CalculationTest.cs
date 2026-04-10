@@ -2,14 +2,13 @@
 using Xunit;
 using Parser = System.Func<string, int, (int, float)?>;
 using ParserChar = System.Func<string, int, (int, char)?>;
-using ParserString = System.Func<string, int, (int, string)?>;
 
 namespace Bunpo.Test;
 
 public class CalculationTest
 {
     public static Parser Number = Combinator.Once(Combinator.Digits, float.Parse);
-    public static ParserString Spaces = Combinator.Once(Combinator.Spaces.ToOption(), _ => "");
+    public static ParserChar Spaces = Combinator.Once(Combinator.Spaces.ToOption(), _ => ' ');
 
     public static ParserChar Add = Combinator.Char('+');
     public static ParserChar Sub = Combinator.Char('-');
@@ -22,15 +21,14 @@ public class CalculationTest
     public void CalcTest()
     {
         Func<ParserChar, Parser> none = c => Combinator.Once(c, _ => 0f);
-        Func<ParserString, Parser> none2 = c => Combinator.Once(c, _ => 0f);
 
         var lazy_expr = Combinator.Lazy<float>();
 
         var factor =
-            none2(Spaces) ^ Number |
-            none2(Spaces) ^ Combinator.Sequence([none(LParen), lazy_expr.Func, none2(Spaces), none(RParen)], xs => xs[1]);
-        var term = Combinator.ChainLeft(factor, Spaces ^ (Mul | Div), (left, op, right) => op == "*" ? left * right : left / right);
-        var expr = Combinator.ChainLeft(term, Spaces ^ (Add | Sub), (left, op, right) => op == "+" ? left + right : left - right);
+            none(Spaces) ^ Number |
+            none(Spaces) ^ Combinator.Sequence([none(LParen), lazy_expr.Func, none(Spaces), none(RParen)], xs => xs[1]);
+        var term = Combinator.ChainLeft(factor, Spaces ^ (Mul | Div), (left, op, right) => op == '*' ? left * right : left / right);
+        var expr = Combinator.ChainLeft(term, Spaces ^ (Add | Sub), (left, op, right) => op == '+' ? left + right : left - right);
 
         lazy_expr.LazyFunc = expr;
 

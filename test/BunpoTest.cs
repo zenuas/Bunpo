@@ -255,7 +255,7 @@ public class BunpoTest
         var a = Combinator.Char('a');
         var b = Combinator.Char('b');
         var c = Combinator.Char('c');
-        var abc = a ^ b ^ c;
+        var abc = a & b & c;
         Assert.Equal(abc.Match(""), null);
         Assert.Equal(abc.Match("ab"), null);
         Assert.Equal(abc.Match("ac"), null);
@@ -264,7 +264,7 @@ public class BunpoTest
         Assert.Equal(abc.Match("xabc"), (1, 3, "abc"));
         Assert.Equal(abc.Match("xybc"), null);
 
-        var ab_c = a ^ b | Combinator.Chars(c);
+        var ab_c = a & b | Combinator.Chars(c);
         Assert.Equal(ab_c.Match(""), null);
         Assert.Equal(ab_c.Match("ab"), (0, 2, "ab"));
         Assert.Equal(ab_c.Match("ac"), (1, 1, "c"));
@@ -424,7 +424,7 @@ public class BunpoTest
     [Fact]
     public void CreateTest()
     {
-        var parser = Combinator.Create() ^ 'x' ^ "123" ^ ['a', 'b', 'c'];
+        var parser = Combinator.Create() & 'x' & "123" & ['a', 'b', 'c'];
 
         Assert.Equal(parser.Match("abc123", 0), null);
         Assert.Equal(parser.Match("x123c", 0), (0, 5, "x123c"));

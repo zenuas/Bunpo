@@ -161,7 +161,7 @@ public static class Combinator
     public static readonly Func<string, int, (int, char)?> AnyChar = Char(_ => true);
     public static readonly Func<string, int, (int, char)?> Cr = Char('\r');
     public static readonly Func<string, int, (int, char)?> Lf = Char('\n');
-    public static readonly Func<string, int, (int, string)?> CrLf = Cr ^ Lf;
+    public static readonly Func<string, int, (int, string)?> CrLf = Cr & Lf;
     public static readonly Func<string, int, (int, string)?> NewLine = String(Lf) | CrLf | String(Cr);
     public static readonly Func<string, int, (int, string)?> LineStart = (input, start) => start == 0 || (start > 0 && (input[start - 1] == '\n' || (input[start - 1] == '\r' && (input.Length == start || (input.Length > start && input[start] != '\n'))))) ? (0, "") : null;
     public static readonly Func<string, int, (int, string)?> LineEnd = (input, start) => start >= 0 && (input.Length <= start || input[start] is '\n' or '\r') ? (0, "") : null;
@@ -189,19 +189,19 @@ public static class Combinator
 
     extension(Func<string, int, (int, char)?>)
     {
-        public static Func<string, int, (int, string)?> operator ^(Func<string, int, (int, char)?> a, Func<string, int, (int, char)?> b) => Add(a, b);
-        public static Func<string, int, (int, string)?> operator ^(Func<string, int, (int, char)?> a, Func<string, int, (int, string)?> b) => Add(a, b);
-        public static Func<string, int, (int, string)?> operator ^(Func<string, int, (int, char)?> a, char b) => Add(a, Char(b));
-        public static Func<string, int, (int, string)?> operator ^(Func<string, int, (int, char)?> a, string b) => Add(a, String(b));
-        public static Func<string, int, (int, string)?> operator ^(Func<string, int, (int, char)?> a, char[] b) => Add(a, CharClass(b));
+        public static Func<string, int, (int, string)?> operator &(Func<string, int, (int, char)?> a, Func<string, int, (int, char)?> b) => Add(a, b);
+        public static Func<string, int, (int, string)?> operator &(Func<string, int, (int, char)?> a, Func<string, int, (int, string)?> b) => Add(a, b);
+        public static Func<string, int, (int, string)?> operator &(Func<string, int, (int, char)?> a, char b) => Add(a, Char(b));
+        public static Func<string, int, (int, string)?> operator &(Func<string, int, (int, char)?> a, string b) => Add(a, String(b));
+        public static Func<string, int, (int, string)?> operator &(Func<string, int, (int, char)?> a, char[] b) => Add(a, CharClass(b));
     }
     extension(Func<string, int, (int, string)?>)
     {
-        public static Func<string, int, (int, string)?> operator ^(Func<string, int, (int, string)?> a, Func<string, int, (int, char)?> b) => Add(a, b);
-        public static Func<string, int, (int, string)?> operator ^(Func<string, int, (int, string)?> a, Func<string, int, (int, string)?> b) => Add(a, b);
-        public static Func<string, int, (int, string)?> operator ^(Func<string, int, (int, string)?> a, char b) => Add(a, Char(b));
-        public static Func<string, int, (int, string)?> operator ^(Func<string, int, (int, string)?> a, string b) => Add(a, String(b));
-        public static Func<string, int, (int, string)?> operator ^(Func<string, int, (int, string)?> a, char[] b) => Add(a, CharClass(b));
+        public static Func<string, int, (int, string)?> operator &(Func<string, int, (int, string)?> a, Func<string, int, (int, char)?> b) => Add(a, b);
+        public static Func<string, int, (int, string)?> operator &(Func<string, int, (int, string)?> a, Func<string, int, (int, string)?> b) => Add(a, b);
+        public static Func<string, int, (int, string)?> operator &(Func<string, int, (int, string)?> a, char b) => Add(a, Char(b));
+        public static Func<string, int, (int, string)?> operator &(Func<string, int, (int, string)?> a, string b) => Add(a, String(b));
+        public static Func<string, int, (int, string)?> operator &(Func<string, int, (int, string)?> a, char[] b) => Add(a, CharClass(b));
     }
     extension<T>(Func<string, int, (int, T)?> self)
     {
