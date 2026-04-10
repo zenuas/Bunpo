@@ -50,7 +50,7 @@
 	@call :setenv VERSION_NAME "powershell -Command Get-Date -Format yyyy.M.d"
 	@call :setenv BUILD_NAME   "powershell -Command Get-Date -Format HHmm"
 	@set      VERSION=%VERSION_NAME%
-	@set PACKAGE_NAME=Zenu.Bunpo.%VERSION%.nupkg
+	@set PACKAGE_NAME=Bunpo.%VERSION%.nupkg
 	git tag %VERSION%
 	git push origin %VERSION%
 	dotnet pack --nologo -v q src/Bunpo.csproj -c Release -o nupkg -p:PackageVersion=%VERSION%
