@@ -1,24 +1,31 @@
 ﻿using BenchmarkDotNet.Attributes;
+using FParsec;
+using FParsec.CSharp;
+using Microsoft.FSharp.Core;
 using Sprache;
 using System;
+using static FParsec.CSharp.CharParsersCS;
+using static FParsec.CSharp.PrimitivesCS;
 
 namespace Bunpo.Benchmark;
 
 public class StaticCalculationBench
 {
-    public static Func<string, int, (int, float)?> BunpoParser = null!;
-    public static Parser<float> SpracheParser = null!;
+    public static Func<string, int, (int, double)?> BunpoParser = null!;
+    public static Parser<double> SpracheParser = null!;
+    public static FSharpFunc<CharStream<Unit>, Reply<double>> FParseParser = null!;
 
     public StaticCalculationBench()
     {
         BunpoParser = BunpoSetup();
         SpracheParser = SpracheSetup();
+        FParseParser = FParseSetup();
     }
 
     [Benchmark]
-    public Func<string, int, (int, float)?> BunpoSetup()
+    public Func<string, int, (int, double)?> BunpoSetup()
     {
-        var Number = Combinator.Digits.ToOnce(float.Parse);
+        var Number = Combinator.Digits.ToOnce(double.Parse);
 
         var Add = Combinator.Char('+');
         var Sub = Combinator.Char('-');
@@ -27,11 +34,11 @@ public class StaticCalculationBench
         var LParen = Combinator.Char('(');
         var RParen = Combinator.Char(')');
 
-        Func<string, int, (int, float)?> expr = null!;
+        Func<string, int, (int, double)?> expr = null!;
 
         var factor =
             Number |
-            Combinator.Sequence([LParen.ToNone<float>(), Combinator.Lazy(() => expr), RParen.ToNone<float>()], xs => xs[1]);
+            Combinator.Sequence([LParen.ToNone<double>(), Combinator.Lazy(() => expr), RParen.ToNone<double>()], xs => xs[1]);
         var term = Combinator.ChainLeft(factor, Mul | Div, (left, op, right) => op == '*' ? left * right : left / right);
         expr = Combinator.ChainLeft(term, Add | Sub, (left, op, right) => op == '+' ? left + right : left - right);
 
@@ -39,13 +46,13 @@ public class StaticCalculationBench
     }
 
     [Benchmark]
-    public Parser<float> SpracheSetup()
+    public Parser<double> SpracheSetup()
     {
         var Number =
             from dec in Parse.Decimal
-            select float.Parse(dec);
+            select double.Parse(dec);
 
-        Parser<float> Expression = null!;
+        Parser<double> Expression = null!;
 
         var Factor =
             (from lparen in Parse.Char('(')
@@ -68,6 +75,25 @@ public class StaticCalculationBench
         return Expression;
     }
 
+    [Benchmark]
+    public FSharpFunc<CharStream<Unit>, Reply<double>> FParseSetup()
+    {
+        var expr =
+            new OPPBuilder<Unit, double, Unit>()
+                .WithOperators(ops => ops
+                    .AddInfix("+", 10, (x, y) => x + y)
+                    .AddInfix("-", 10, (x, y) => x - y)
+                    .AddInfix("*", 20, (x, y) => x * y)
+                    .AddInfix("/", 20, (x, y) => x / y))
+                .WithTerms(term => Choice(
+                    Float,
+                    Between(CharP('('), term, CharP(')'))))
+                .Build()
+                .ExpressionParser;
+
+        return expr;
+    }
+
     public static string Expr5 = "1-(2*3/4+5)";
 
     public static string Expr300 =
@@ -86,27 +112,41 @@ public class StaticCalculationBench
     public void Bunpo5Parse()
     {
         var result = BunpoParser.Parse(Expr5);
-        if (result != -5.5f) throw new("");
+        if (result != -5.5d) throw new("");
     }
 
     [Benchmark]
     public void Sprache5Parse()
     {
         var result = SpracheParser.Parse(Expr5);
-        if (result != -5.5f) throw new("");
+        if (result != -5.5d) throw new("");
+    }
+
+    [Benchmark]
+    public void FParse5Parse()
+    {
+        var result = FParseParser.ParseString(Expr5).Result;
+        if (result != -5.5d) throw new("");
     }
 
     [Benchmark]
     public void Bunpo300Parse()
     {
         var result = BunpoParser.Parse(Expr300);
-        if (result != 3853870f) throw new("");
+        if (result != 3853870d) throw new("");
     }
 
     [Benchmark]
     public void Sprache300Parse()
     {
         var result = SpracheParser.Parse(Expr300);
-        if (result != 3853870f) throw new("");
+        if (result != 3853870d) throw new("");
+    }
+
+    [Benchmark]
+    public void FParse300Parse()
+    {
+        var result = FParseParser.ParseString(Expr300).Result;
+        if (result != 3853870d) throw new("");
     }
 }
