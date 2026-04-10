@@ -38,7 +38,7 @@ public class StaticCalculationBench
 
         var factor =
             Number |
-            Combinator.Sequence([LParen.ToNone<double>(), Combinator.Lazy(() => expr), RParen.ToNone<double>()], xs => xs[1]);
+            Combinator.Sequence(LParen.ToNone<double>(), Combinator.Lazy(() => expr), RParen.ToNone<double>(), (_, x, _) => x);
         var term = Combinator.ChainLeft(factor, Mul | Div, (left, op, right) => op == '*' ? left * right : left / right);
         expr = Combinator.ChainLeft(term, Add | Sub, (left, op, right) => op == '+' ? left + right : left - right);
 

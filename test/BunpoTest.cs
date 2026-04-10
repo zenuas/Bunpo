@@ -252,6 +252,17 @@ public class BunpoTest
         Assert.Equal(Combinator.Sequence(Combinator.Char('a'), Combinator.Char('b')).Match("bb"), null);
         Assert.Equal(Combinator.Sequence(Combinator.Char('a'), Combinator.Char('b')).Match("ba"), null);
         Assert.Equal(Combinator.Sequence(Combinator.Char('a'), Combinator.Char('b')).Match("xyz"), null);
+        Assert.Equal(Combinator.Sequence(Combinator.Char('a'), Combinator.Char('b'), (a, b) => 1.5f).Match("abc"), (0, 2, 1.5f));
+
+        Assert.Equal(Combinator.Sequence(Combinator.Char('a'), Combinator.Char('b'), Combinator.Char('c')).Match(""), null);
+        Assert.Equal(Combinator.Sequence(Combinator.Char('a'), Combinator.Char('b'), Combinator.Char('c')).Match("a"), null);
+        Assert.Equal(Combinator.Sequence(Combinator.Char('a'), Combinator.Char('b'), Combinator.Char('c')).Match("aa"), null);
+        Assert.Equal(Combinator.Sequence(Combinator.Char('a'), Combinator.Char('b'), Combinator.Char('c')).Match("ab"), null);
+        Assert.Equal(Combinator.Sequence(Combinator.Char('a'), Combinator.Char('b'), Combinator.Char('c')).Match("abc"), (0, 3, 'c'));
+        Assert.Equal(Combinator.Sequence(Combinator.Char('a'), Combinator.Char('b'), Combinator.Char('c')).Match("bb"), null);
+        Assert.Equal(Combinator.Sequence(Combinator.Char('a'), Combinator.Char('b'), Combinator.Char('c')).Match("ba"), null);
+        Assert.Equal(Combinator.Sequence(Combinator.Char('a'), Combinator.Char('b'), Combinator.Char('c')).Match("xyz"), null);
+        Assert.Equal(Combinator.Sequence(Combinator.Char('a'), Combinator.Char('b'), Combinator.Char('c'), (a, b, c) => 1.5f).Match("abc"), (0, 3, 1.5f));
 
         Assert.Equal(Combinator.Sequence([Combinator.Char('a'), Combinator.Char('b')]).Match(""), null);
         Assert.Equal(Combinator.Sequence([Combinator.Char('a'), Combinator.Char('b')]).Match("a"), null);
@@ -261,6 +272,7 @@ public class BunpoTest
         Assert.Equal(Combinator.Sequence([Combinator.Char('a'), Combinator.Char('b')]).Match("bb"), null);
         Assert.Equal(Combinator.Sequence([Combinator.Char('a'), Combinator.Char('b')]).Match("ba"), null);
         Assert.Equal(Combinator.Sequence([Combinator.Char('a'), Combinator.Char('b')]).Match("xyz"), null);
+        Assert.Equal(Combinator.Sequence([Combinator.Char('a'), Combinator.Char('b')], xs => 1.5f).Match("abc"), (0, 2, 1.5f));
     }
 
     [Fact]

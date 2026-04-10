@@ -39,7 +39,7 @@ public class AstBench
 
         var factor =
             Number.ToOnce(x => new Node { Ope = '9', Value = x }) |
-            Combinator.Sequence([LParen.ToNone<Node>(), Combinator.Lazy(() => expr), RParen.ToNone<Node>()], xs => new Node { Ope = '(', Left = xs[1] });
+            Combinator.Sequence(LParen.ToNone<Node>(), Combinator.Lazy(() => expr), RParen.ToNone<Node>(), (_, x, _) => new Node { Ope = '(', Left = x });
         var term = Combinator.ChainLeft(factor, Mul | Div, (left, op, right) => new Node { Ope = op, Value = 0, Left = left, Right = right });
         expr = Combinator.ChainLeft(term, Add | Sub, (left, op, right) => new Node { Ope = op, Value = 0, Left = left, Right = right });
 
