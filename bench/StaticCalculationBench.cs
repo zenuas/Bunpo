@@ -4,10 +4,19 @@ using System;
 
 namespace Bunpo.Benchmark;
 
-public class CalculationBench
+public class StaticCalculationBench
 {
+    public static Func<string, int, (int, float)?> BunpoParser = null!;
+    public static Parser<float> SpracheParser = null!;
+
+    public StaticCalculationBench()
+    {
+        BunpoParser = BunpoSetup();
+        SpracheParser = SpracheSetup();
+    }
+
     [Benchmark]
-    public void BunpoSetupAndParse()
+    public Func<string, int, (int, float)?> BunpoSetup()
     {
         var Number = Combinator.Once(Combinator.Digits, float.Parse);
         var Spaces = Combinator.Once(Combinator.Spaces.ToOption(), _ => ' ');
@@ -30,13 +39,11 @@ public class CalculationBench
         var expr = Combinator.ChainLeft(term, Spaces ^ (Add | Sub), (left, op, right) => op == '+' ? left + right : left - right);
 
         lazy_expr.LazyFunc = expr;
-
-        var result = expr.Parse("1-2*3/4+5");
-        if (result != 4.5f) throw new("");
+        return expr;
     }
 
     [Benchmark]
-    public void SpracheSetupAndParse()
+    public Parser<float> SpracheSetup()
     {
         var Number =
             from dec in Parse.Decimal
@@ -62,7 +69,20 @@ public class CalculationBench
                 Term,
                 (op, left, right) => op == '+' ? left + right : left - right);
 
-        var result = Expression.Parse("1-2*3/4+5");
+        return Expression;
+    }
+
+    [Benchmark]
+    public void BunpoParse()
+    {
+        var result = BunpoParser.Parse("1-2*3/4+5");
+        if (result != 4.5f) throw new("");
+    }
+
+    [Benchmark]
+    public void SpracheParse()
+    {
+        var result = SpracheParser.Parse("1-2*3/4+5");
         if (result != 4.5f) throw new("");
     }
 }
