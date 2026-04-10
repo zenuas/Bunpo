@@ -22,12 +22,12 @@ public class CalculationBench
 
         var factor =
             Number |
-            Combinator.Sequence([Combinator.None<char, float>(LParen), Combinator.Lazy(expr), Combinator.None<char, float>(RParen)], xs => xs[1]);
+            Combinator.Sequence([Combinator.None<char, float>(LParen), Combinator.Lazy(() => expr), Combinator.None<char, float>(RParen)], xs => xs[1]);
         var term = Combinator.ChainLeft(factor, Mul | Div, (left, op, right) => op == '*' ? left * right : left / right);
         expr = Combinator.ChainLeft(term, Add | Sub, (left, op, right) => op == '+' ? left + right : left - right);
 
-        var result = expr.Parse("1-2*3/4+5");
-        if (result != 4.5f) throw new("");
+        var result = expr.Parse("1-(2*3/4+5)");
+        if (result != -5.5f) throw new("");
     }
 
     [Benchmark]
@@ -57,7 +57,7 @@ public class CalculationBench
                 Term,
                 (op, left, right) => op == '+' ? left + right : left - right);
 
-        var result = Expression.Parse("1-2*3/4+5");
-        if (result != 4.5f) throw new("");
+        var result = Expression.Parse("1-(2*3/4+5)");
+        if (result != -5.5f) throw new("");
     }
 }

@@ -22,7 +22,7 @@ public class CalculationTest
 
         var factor =
             Spaces.ToNone<float>() ^ Number |
-            Spaces.ToNone<float>() ^ Combinator.Sequence([LParen.ToNone<float>(), Combinator.Lazy(expr), Spaces.ToNone<float>(), RParen.ToNone<float>()], xs => xs[1]);
+            Spaces.ToNone<float>() ^ Combinator.Sequence([LParen.ToNone<float>(), Combinator.Lazy(() => expr), Spaces.ToNone<float>(), RParen.ToNone<float>()], xs => xs[1]);
         var term = Combinator.ChainLeft(factor, Spaces ^ (Mul | Div), (left, op, right) => op == '*' ? left * right : left / right);
         expr = Combinator.ChainLeft(term, Spaces ^ (Add | Sub), (left, op, right) => op == '+' ? left + right : left - right);
 
@@ -36,5 +36,6 @@ public class CalculationTest
         Assert.Equal(expr.Parse(" 1 - 2 * 3 / 4"), -0.5f);
         Assert.Equal(expr.Parse(" 1 * 2 - 3 * 4"), -10f);
         Assert.Equal(expr.Parse(" 1 - 2 * 3 / 4 + 5"), 4.5f);
+        Assert.Equal(expr.Parse(" 1 - ( 2 * 3 / 4 + 5 )"), -5.5f);
     }
 }
