@@ -136,6 +136,7 @@ public class BunpoTest
 
         Assert.Equal(Combinator.String<float>((s, start) => (0, 1.5f)).Match("abc"), (0, 0, 1.5f));
         Assert.Equal(Combinator.String("a").Match("ab"), (0, 1, "a"));
+        Assert.Equal(Combinator.String('a').Match("ab"), (0, 1, "a"));
         Assert.Equal(Combinator.String((s, start) => null).Match("abc"), null);
 
         Assert.Equal(Combinator.String<float>((s, start) => s.Length >= start + 3 && char.IsAsciiDigit(s[start]) && char.IsAsciiLetter(s[start + 1]) ? (2, 1.5f) : null).Match("abc"), null);
