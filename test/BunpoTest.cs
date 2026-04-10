@@ -131,7 +131,7 @@ public class BunpoTest
         Assert.Equal(Combinator.String("").Match("ab"), (0, 0, ""));
 
         Assert.Equal(Combinator.String<float>((s, start) => (0, 1.5f)).Match("abc"), (0, 0, 1.5f));
-        Assert.Equal(Combinator.String('a').Match("ab"), (0, 1, "a"));
+        Assert.Equal(Combinator.String("a").Match("ab"), (0, 1, "a"));
         Assert.Equal(Combinator.String((s, start) => null).Match("abc"), null);
 
         Assert.Equal(Combinator.String<float>((s, start) => s.Length >= start + 3 && char.IsAsciiDigit(s[start]) && char.IsAsciiLetter(s[start + 1]) ? (2, 1.5f) : null).Match("abc"), null);
@@ -154,6 +154,41 @@ public class BunpoTest
         Assert.Equal(Combinator.CharClass("xyz").Match("xyz"), (0, 1, 'x'));
         Assert.Equal(Combinator.CharClass("xyz").Match("yz"), (0, 1, 'y'));
         Assert.Equal(Combinator.CharClass("xyz").Match("z"), (0, 1, 'z'));
+    }
+
+    [Fact]
+    public void OnceTest()
+    {
+        Assert.Equal(Combinator.Once(Combinator.Char('a'), _ => 1.5f).Match(""), null);
+        Assert.Equal(Combinator.Once(Combinator.Char('a'), _ => 1.5f).Match("a"), (0, 1, 1.5f));
+
+        Assert.Equal(Combinator.Char('a').ToOnce(_ => 1.5f).Match(""), null);
+        Assert.Equal(Combinator.Char('a').ToOnce(_ => 1.5f).Match("a"), (0, 1, 1.5f));
+
+        Assert.Equal(Combinator.String("a").ToOnce(_ => 1.5f).Match(""), null);
+        Assert.Equal(Combinator.String("a").ToOnce(_ => 1.5f).Match("a"), (0, 1, 1.5f));
+    }
+
+    [Fact]
+    public void NoneTest()
+    {
+        Assert.Equal(Combinator.None<char, float>(Combinator.Char('a')).Match(""), null);
+        Assert.Equal(Combinator.None<char, float>(Combinator.Char('a')).Match("a"), (0, 1, 0f));
+
+        Assert.Equal(Combinator.None<string, float>(Combinator.String("a")).Match(""), null);
+        Assert.Equal(Combinator.None<string, float>(Combinator.String("a")).Match("a"), (0, 1, 0f));
+
+        Assert.Equal(Combinator.None<int, float>(Combinator.String("a").ToOnce(_ => 123)).Match(""), null);
+        Assert.Equal(Combinator.None<int, float>(Combinator.String("a").ToOnce(_ => 123)).Match("a"), (0, 1, 0f));
+
+        Assert.Equal(Combinator.Char('a').ToNone<char, float>().Match(""), null);
+        Assert.Equal(Combinator.Char('a').ToNone<char, float>().Match("a"), (0, 1, 0f));
+
+        Assert.Equal(Combinator.String("a").ToNone<string, float>().Match(""), null);
+        Assert.Equal(Combinator.String("a").ToNone<string, float>().Match("a"), (0, 1, 0f));
+
+        Assert.Equal(Combinator.String("a").ToOnce(_ => 123).ToNone<int, float>().Match(""), null);
+        Assert.Equal(Combinator.String("a").ToOnce(_ => 123).ToNone<int, float>().Match("a"), (0, 1, 0f));
     }
 
     [Fact]
