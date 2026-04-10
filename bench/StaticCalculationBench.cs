@@ -18,7 +18,7 @@ public class StaticCalculationBench
     [Benchmark]
     public Func<string, int, (int, float)?> BunpoSetup()
     {
-        var Number = Combinator.Once(Combinator.Digits, float.Parse);
+        var Number = Combinator.Digits.ToOnce(float.Parse);
 
         var Add = Combinator.Char('+');
         var Sub = Combinator.Char('-');
@@ -31,7 +31,7 @@ public class StaticCalculationBench
 
         var factor =
             Number |
-            Combinator.Sequence([Combinator.None<char, float>(LParen), Combinator.Lazy(() => expr), Combinator.None<char, float>(RParen)], xs => xs[1]);
+            Combinator.Sequence([LParen.ToNone<float>(), Combinator.Lazy(() => expr), RParen.ToNone<float>()], xs => xs[1]);
         var term = Combinator.ChainLeft(factor, Mul | Div, (left, op, right) => op == '*' ? left * right : left / right);
         expr = Combinator.ChainLeft(term, Add | Sub, (left, op, right) => op == '+' ? left + right : left - right);
 

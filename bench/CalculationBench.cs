@@ -9,7 +9,7 @@ public class CalculationBench
     [Benchmark]
     public void BunpoSetupAndParse()
     {
-        var Number = Combinator.Once(Combinator.Digits, float.Parse);
+        var Number = Combinator.Digits.ToOnce(float.Parse);
 
         var Add = Combinator.Char('+');
         var Sub = Combinator.Char('-');
@@ -22,7 +22,7 @@ public class CalculationBench
 
         var factor =
             Number |
-            Combinator.Sequence([Combinator.None<char, float>(LParen), Combinator.Lazy(() => expr), Combinator.None<char, float>(RParen)], xs => xs[1]);
+            Combinator.Sequence([LParen.ToNone<float>(), Combinator.Lazy(() => expr), RParen.ToNone<float>()], xs => xs[1]);
         var term = Combinator.ChainLeft(factor, Mul | Div, (left, op, right) => op == '*' ? left * right : left / right);
         expr = Combinator.ChainLeft(term, Add | Sub, (left, op, right) => op == '+' ? left + right : left - right);
 
