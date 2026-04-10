@@ -203,7 +203,6 @@ public static class Combinator
         public static Func<string, int, (int, string)?> operator &(Func<string, int, (int, string)?> a, char b) => Add(a, Char(b));
         public static Func<string, int, (int, string)?> operator &(Func<string, int, (int, string)?> a, string b) => Add(a, String(b));
         public static Func<string, int, (int, string)?> operator &(Func<string, int, (int, string)?> a, char[] b) => Add(a, CharClass(b));
-        public Func<string, int, (int, R)?> ToNone<R>() => None<string, R>(self);
     }
     extension<T>(Func<string, int, (int, T)?> self)
     {
