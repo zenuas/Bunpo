@@ -302,7 +302,7 @@ public static class Combinator
 
         return r8 is { } ? (r8_start - start + r8.Value.Item1, match(r1.Value.Item2, r2.Value.Item2, r3.Value.Item2, r4.Value.Item2, r5.Value.Item2, r6.Value.Item2, r7.Value.Item2, r8.Value.Item2)) : null;
     };
-    public static Func<string, int, (int, T?)?> Sequence<T>(params Func<string, int, (int, T)?>[] sequence) => Sequence(sequence, static xs => xs.LastOrDefault());
+    public static Func<string, int, (int, T?)?> Sequence<T>(params Func<string, int, (int, T)?>[] sequence) => Sequence(sequence, xs => xs.LastOrDefault());
     public static Func<string, int, (int, R)?> Sequence<T, R>(Func<string, int, (int, T)?>[] sequence, Func<IReadOnlyList<T>, R> match) => (input, start) =>
     {
         if (start < 0 || start > input.Length) return null;
