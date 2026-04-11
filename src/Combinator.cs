@@ -149,6 +149,7 @@ public static class Combinator
         var r2_start = start + r1.Value.Item1;
         if (r2_start > input.Length) return null;
         var r2 = b(input, r2_start);
+
         return r2 is { } ? (r1.Value.Item1 + r2.Value.Item1, match(r1.Value.Item2, r2.Value.Item2)) : null;
     };
     public static Func<string, int, (int, R)?> Sequence<T1, T2, T3, R>(Func<string, int, (int, T1)?> a, Func<string, int, (int, T2)?> b, Func<string, int, (int, T3)?> c, Func<T1, T2, T3, R> match) => (input, start) =>
