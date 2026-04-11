@@ -353,7 +353,7 @@ public static class Combinator
 
     public static readonly Func<string, int, (int, string)?> Start = (input, start) => start == 0 ? (0, "") : null;
     public static readonly Func<string, int, (int, string)?> End = (input, start) => input.Length <= start ? (0, "") : null;
-    public static readonly Func<string, int, (int, string)?> Error = (input, start) => null;
+    public static Func<string, int, (int, T)?> Error<T>() => (input, start) => null;
 
     public static readonly Func<string, int, (int, string)?> WordBoundary = (input, start) =>
         (start == 0 && input.Length > 0 && (char.IsAsciiLetterOrDigit(input[0]) || input[0] == '_')) ||

@@ -633,6 +633,18 @@ public class BunpoTest
     }
 
     [Fact]
+    public void ErrorTest()
+    {
+        Assert.Equal(Combinator.Choice(Combinator.Char('a'), Combinator.Error<char>()).Match(""), null);
+        Assert.Equal(Combinator.Choice(Combinator.Char('a'), Combinator.Error<char>()).Match("a"), (0, 1, 'a'));
+        Assert.Equal(Combinator.Choice(Combinator.Char('a'), Combinator.Error<char>()).Match("b"), null);
+
+        Assert.Equal(Combinator.Sequence(Combinator.Char('a'), Combinator.Error<char>()).Match(""), null);
+        Assert.Equal(Combinator.Sequence(Combinator.Char('a'), Combinator.Error<char>()).Match("a"), null);
+        Assert.Equal(Combinator.Sequence(Combinator.Char('a'), Combinator.Error<char>()).Match("b"), null);
+    }
+
+    [Fact]
     public void OperatorCharTest()
     {
         var left = Combinator.Char('a');
