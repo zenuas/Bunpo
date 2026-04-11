@@ -8,8 +8,8 @@ public class CalculationTest
     [Fact]
     public void CalcTest()
     {
-        var Number = Combinator.Digits.ToOnce(float.Parse);
-        var Spaces = Combinator.Spaces.ToOption().ToOnce(_ => ' ');
+        var Number = Combinator.NumberFloat;
+        var Spaces = Combinator.Spaces.ToOption().ToNone<string?, char>();
 
         var Add = Combinator.Char('+');
         var Sub = Combinator.Char('-');
