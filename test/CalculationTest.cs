@@ -1,5 +1,5 @@
-﻿using Xunit;
-using Parser = System.Func<string, int, (int, float)?>;
+﻿using System;
+using Xunit;
 
 namespace Bunpo.Test;
 
@@ -18,7 +18,7 @@ public class CalculationTest
         var LParen = Combinator.Char('(');
         var RParen = Combinator.Char(')');
 
-        Parser expr = null!;
+        Func<ReadOnlySpan<char>, (int, float)?> expr = null!;
 
         var factor =
             Spaces.ToNone<float>() ^ Number |

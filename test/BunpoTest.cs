@@ -11,59 +11,34 @@ public class BunpoTest
         Assert.Throws<ArgumentOutOfRangeException>(() => Combinator.Many(Combinator.AnyChar, 1, 0));
 
         Assert.Throws<ArgumentOutOfRangeException>(() => Combinator.AnyChar.Match("", -1));
-        Assert.Equal(Combinator.AnyChar("", -1), null);
         Assert.Equal(Combinator.AnyChar.Match("", 1), null);
 
         Assert.Throws<ArgumentOutOfRangeException>(() => Combinator.CharClass("a").Match("", -1));
-        Assert.Equal(Combinator.CharClass("a")("", -1), null);
         Assert.Equal(Combinator.CharClass("a").Match("", 1), null);
 
         Assert.Throws<ArgumentOutOfRangeException>(() => Combinator.String("a").Match("", -1));
         Assert.Equal(Combinator.String("a").Match("", 1), null);
 
         Assert.Throws<ArgumentOutOfRangeException>(() => Combinator.AnyChar.ToMany().Match("", -1));
-        Assert.Equal(Combinator.AnyChar.ToMany()("", -1), null);
         Assert.Equal(Combinator.AnyChar.ToMany().Match("", 1), null);
 
         Assert.Throws<ArgumentOutOfRangeException>(() => Combinator.AnyChar.ToMany1().Match("", -1));
-        Assert.Equal(Combinator.AnyChar.ToMany1()("", -1), null);
         Assert.Equal(Combinator.AnyChar.ToMany1().Match("", 1), null);
 
         Assert.Throws<ArgumentOutOfRangeException>(() => Combinator.AnyChar.ToMany(0, 1).Match("", -1));
-        Assert.Equal(Combinator.AnyChar.ToMany(0, 1)("", -1), null);
         Assert.Equal(Combinator.AnyChar.ToMany(0, 1).Match("", 1), null);
 
         Assert.Throws<ArgumentOutOfRangeException>(() => Combinator.AnyChar.ToOption().Match("", -1));
-        Assert.Equal(Combinator.AnyChar.ToOption()("", -1), null);
         Assert.Equal(Combinator.AnyChar.ToOption().Match("", 1), null);
 
-        Assert.Throws<ArgumentOutOfRangeException>(() => Combinator.WordBoundary.Match("", -1));
-        Assert.Equal(Combinator.WordBoundary("", -1), null);
-        Assert.Equal(Combinator.WordBoundary.Match("", 1), null);
-
-        Assert.Throws<ArgumentOutOfRangeException>(() => Combinator.NonWordBoundary.Match("", -1));
-        Assert.Equal(Combinator.NonWordBoundary("", -1), null);
-        Assert.Equal(Combinator.NonWordBoundary.Match("", 1), null);
-
-        Assert.Throws<ArgumentOutOfRangeException>(() => Combinator.LineStart.Match("", -1));
-        Assert.Equal(Combinator.LineStart("", -1), null);
-        Assert.Equal(Combinator.LineStart.Match("", 1), null);
-
         Assert.Throws<ArgumentOutOfRangeException>(() => Combinator.LineEnd.Match("", -1));
-        Assert.Equal(Combinator.LineEnd("", -1), null);
         Assert.Equal(Combinator.LineEnd.Match("", 1), null);
 
-        Assert.Throws<ArgumentOutOfRangeException>(() => Combinator.Start.Match("", -1));
-        Assert.Equal(Combinator.Start("", -1), null);
-        Assert.Equal(Combinator.Start.Match("", 1), null);
-
         Assert.Throws<ArgumentOutOfRangeException>(() => Combinator.End.Match("", -1));
-        Assert.Equal(Combinator.End("", -1), null);
         Assert.Equal(Combinator.End.Match("", 1), null);
 
-        Assert.Throws<ArgumentOutOfRangeException>(() => Combinator.ZeroWidth((input, start) => (false, "")).Match("", -1));
-        Assert.Equal(Combinator.ZeroWidth((input, start) => (false, ""))("", -1), null);
-        Assert.Equal(Combinator.ZeroWidth((input, start) => (false, "")).Match("", 1), null);
+        Assert.Throws<ArgumentOutOfRangeException>(() => Combinator.ZeroWidth(_ => (false, "")).Match("", -1));
+        Assert.Equal(Combinator.ZeroWidth(_ => (false, "")).Match("", 1), null);
     }
 
     [Fact]
@@ -146,15 +121,15 @@ public class BunpoTest
         Assert.Equal(Combinator.String("").Match("a"), (0, 0, ""));
         Assert.Equal(Combinator.String("").Match("ab"), (0, 0, ""));
 
-        Assert.Equal(Combinator.String<float>((s, start) => (0, 1.5f)).Match("abc"), (0, 0, 1.5f));
+        Assert.Equal(Combinator.String<float>(s => (0, 1.5f)).Match("abc"), (0, 0, 1.5f));
         Assert.Equal(Combinator.String("a").Match("ab"), (0, 1, "a"));
         Assert.Equal(Combinator.String('a').Match("ab"), (0, 1, "a"));
-        Assert.Equal(Combinator.String((s, start) => null).Match("abc"), null);
+        Assert.Equal(Combinator.String(s => null).Match("abc"), null);
 
-        Assert.Equal(Combinator.String<float>((s, start) => s.Length >= start + 3 && char.IsAsciiDigit(s[start]) && char.IsAsciiLetter(s[start + 1]) ? (2, 1.5f) : null).Match("abc"), null);
-        Assert.Equal(Combinator.String<float>((s, start) => s.Length >= start + 3 && char.IsAsciiDigit(s[start]) && char.IsAsciiLetter(s[start + 1]) ? (2, 1.5f) : null).Match("123"), null);
-        Assert.Equal(Combinator.String<float>((s, start) => s.Length >= start + 3 && char.IsAsciiDigit(s[start]) && char.IsAsciiLetter(s[start + 1]) ? (2, 1.5f) : null).Match("1x"), null);
-        Assert.Equal(Combinator.String<float>((s, start) => s.Length >= start + 3 && char.IsAsciiDigit(s[start]) && char.IsAsciiLetter(s[start + 1]) ? (2, 1.5f) : null).Match("1xy"), (0, 2, 1.5f));
+        Assert.Equal(Combinator.String<float>(s => s.Length >= 3 && char.IsAsciiDigit(s[0]) && char.IsAsciiLetter(s[1]) ? (2, 1.5f) : null).Match("abc"), null);
+        Assert.Equal(Combinator.String<float>(s => s.Length >= 3 && char.IsAsciiDigit(s[0]) && char.IsAsciiLetter(s[1]) ? (2, 1.5f) : null).Match("123"), null);
+        Assert.Equal(Combinator.String<float>(s => s.Length >= 3 && char.IsAsciiDigit(s[0]) && char.IsAsciiLetter(s[1]) ? (2, 1.5f) : null).Match("1x"), null);
+        Assert.Equal(Combinator.String<float>(s => s.Length >= 3 && char.IsAsciiDigit(s[0]) && char.IsAsciiLetter(s[1]) ? (2, 1.5f) : null).Match("1xy"), (0, 2, 1.5f));
     }
 
     [Fact]
@@ -453,11 +428,11 @@ public class BunpoTest
     [Fact]
     public void ZeroWidthTest()
     {
-        Assert.Equal(Combinator.ZeroWidth((input, start) => (false, "")).Match(""), null);
-        Assert.Equal(Combinator.ZeroWidth((input, start) => (true, "xx")).Match(""), (0, 0, "xx"));
+        Assert.Equal(Combinator.ZeroWidth(_ => (false, "")).Match(""), null);
+        Assert.Equal(Combinator.ZeroWidth(_ => (true, "xx")).Match(""), (0, 0, "xx"));
 
-        Assert.Equal(Combinator.ZeroWidth((input, start) => start < input.Length && input[start] == 'z' ? (true, "z") : (false, "")).Match("xaby"), null);
-        Assert.Equal(Combinator.ZeroWidth((input, start) => start < input.Length && input[start] == 'b' ? (true, "z") : (false, "")).Match("xaby"), (2, 0, "z"));
+        Assert.Equal(Combinator.ZeroWidth(input => input.Length > 0 && input[0] == 'z' ? (true, "z") : (false, "")).Match("xaby"), null);
+        Assert.Equal(Combinator.ZeroWidth(input => input.Length > 0 && input[0] == 'b' ? (true, "z") : (false, "")).Match("xaby"), (2, 0, "z"));
     }
 
     [Fact]
@@ -505,30 +480,6 @@ public class BunpoTest
     }
 
     [Fact]
-    public void WordBoundaryTest()
-    {
-        Assert.Equal(Combinator.WordBoundary.Match("[  xyzabc123]"), (3, 0, ""));
-        Assert.Equal(Combinator.WordBoundary.Match("xyzabc123]"), (0, 0, ""));
-        Assert.Equal(Combinator.WordBoundary.Match("[]"), null);
-        Assert.Equal(Combinator.WordBoundary.Match("xyz", 0), (0, 0, ""));
-        Assert.Equal(Combinator.WordBoundary.Match("xyz", 1), (3, 0, ""));
-        Assert.Equal(Combinator.WordBoundary.Match("xyz", 2), (3, 0, ""));
-        Assert.Equal(Combinator.WordBoundary.Match("xyz", 3), (3, 0, ""));
-    }
-
-    [Fact]
-    public void NonWordBoundaryTest()
-    {
-        Assert.Equal(Combinator.NonWordBoundary.Match("[  xyzabc123]"), (0, 0, ""));
-        Assert.Equal(Combinator.NonWordBoundary.Match("xyzabc123]"), (1, 0, ""));
-        Assert.Equal(Combinator.NonWordBoundary.Match("[]"), (0, 0, ""));
-        Assert.Equal(Combinator.NonWordBoundary.Match("xyz", 0), (1, 0, ""));
-        Assert.Equal(Combinator.NonWordBoundary.Match("xyz", 1), (1, 0, ""));
-        Assert.Equal(Combinator.NonWordBoundary.Match("xyz", 2), (2, 0, ""));
-        Assert.Equal(Combinator.NonWordBoundary.Match("xyz", 3), null);
-    }
-
-    [Fact]
     public void NewLineTest()
     {
         Assert.Equal(Combinator.Cr.Match("abc123"), null);
@@ -553,83 +504,35 @@ public class BunpoTest
     }
 
     [Fact]
-    public void LineTest()
+    public void LineEndTest()
     {
-        Assert.Equal(Combinator.LineStart.Match("abc123"), (0, 0, ""));
-        Assert.Equal(Combinator.LineStart.Match("abc123", 1), null);
         Assert.Equal(Combinator.LineEnd.Match("abc123"), (6, 0, ""));
         Assert.Equal(Combinator.LineEnd.Match("abc123", 5), (6, 0, ""));
 
-        Assert.Equal(Combinator.LineStart.Match("abc\r123"), (0, 0, ""));
-        Assert.Equal(Combinator.LineStart.Match("abc\r123", 1), (4, 0, ""));
         Assert.Equal(Combinator.LineEnd.Match("abc\r123"), (3, 0, ""));
         Assert.Equal(Combinator.LineEnd.Match("abc\r123", 5), (7, 0, ""));
 
-        Assert.Equal(Combinator.LineStart.Match("abc\n123"), (0, 0, ""));
-        Assert.Equal(Combinator.LineStart.Match("abc\n123", 1), (4, 0, ""));
         Assert.Equal(Combinator.LineEnd.Match("abc\n123"), (3, 0, ""));
         Assert.Equal(Combinator.LineEnd.Match("abc\n123", 5), (7, 0, ""));
 
-        Assert.Equal(Combinator.LineStart.Match("abc\r\n123"), (0, 0, ""));
-        Assert.Equal(Combinator.LineStart.Match("abc\r\n123", 1), (5, 0, ""));
         Assert.Equal(Combinator.LineEnd.Match("abc\r\n123"), (3, 0, ""));
         Assert.Equal(Combinator.LineEnd.Match("abc\r\n123", 5), (8, 0, ""));
-
-        Assert.Equal(Combinator.LineStart.Match("\ra", 0), (0, 0, ""));
-        Assert.Equal(Combinator.LineStart.Match("\ra", 1), (1, 0, ""));
-
-        Assert.Equal(Combinator.LineStart.Match("\r", 0), (0, 0, ""));
-        Assert.Equal(Combinator.LineStart.Match("\r", 1), (1, 0, ""));
-
-        Assert.Equal(Combinator.LineStart.Match("\na", 0), (0, 0, ""));
-        Assert.Equal(Combinator.LineStart.Match("\na", 1), (1, 0, ""));
-
-        Assert.Equal(Combinator.LineStart.Match("\n", 0), (0, 0, ""));
-        Assert.Equal(Combinator.LineStart.Match("\n", 1), (1, 0, ""));
-
-        Assert.Equal(Combinator.LineStart.Match("\r\n", 0), (0, 0, ""));
-        Assert.Equal(Combinator.LineStart.Match("\r\n", 1), (2, 0, ""));
-        Assert.Equal(Combinator.LineStart.Match("\r\n", 2), (2, 0, ""));
     }
 
     [Fact]
-    public void StartEndTest()
+    public void EndTest()
     {
-        Assert.Equal(Combinator.Start.Match("abc123"), (0, 0, ""));
-        Assert.Equal(Combinator.Start.Match("abc123", 1), null);
         Assert.Equal(Combinator.End.Match("abc123"), (6, 0, ""));
         Assert.Equal(Combinator.End.Match("abc123", 5), (6, 0, ""));
 
-        Assert.Equal(Combinator.Start.Match("abc\r123"), (0, 0, ""));
-        Assert.Equal(Combinator.Start.Match("abc\r123", 1), null);
         Assert.Equal(Combinator.End.Match("abc\r123"), (7, 0, ""));
         Assert.Equal(Combinator.End.Match("abc\r123", 5), (7, 0, ""));
 
-        Assert.Equal(Combinator.Start.Match("abc\n123"), (0, 0, ""));
-        Assert.Equal(Combinator.Start.Match("abc\n123", 1), null);
         Assert.Equal(Combinator.End.Match("abc\n123"), (7, 0, ""));
         Assert.Equal(Combinator.End.Match("abc\n123", 5), (7, 0, ""));
 
-        Assert.Equal(Combinator.Start.Match("abc\r\n123"), (0, 0, ""));
-        Assert.Equal(Combinator.Start.Match("abc\r\n123", 1), null);
         Assert.Equal(Combinator.End.Match("abc\r\n123"), (8, 0, ""));
         Assert.Equal(Combinator.End.Match("abc\r\n123", 5), (8, 0, ""));
-
-        Assert.Equal(Combinator.Start.Match("\ra", 0), (0, 0, ""));
-        Assert.Equal(Combinator.Start.Match("\ra", 1), null);
-
-        Assert.Equal(Combinator.Start.Match("\r", 0), (0, 0, ""));
-        Assert.Equal(Combinator.Start.Match("\r", 1), null);
-
-        Assert.Equal(Combinator.Start.Match("\na", 0), (0, 0, ""));
-        Assert.Equal(Combinator.Start.Match("\na", 1), null);
-
-        Assert.Equal(Combinator.Start.Match("\n", 0), (0, 0, ""));
-        Assert.Equal(Combinator.Start.Match("\n", 1), null);
-
-        Assert.Equal(Combinator.Start.Match("\r\n", 0), (0, 0, ""));
-        Assert.Equal(Combinator.Start.Match("\r\n", 1), null);
-        Assert.Equal(Combinator.Start.Match("\r\n", 2), null);
     }
 
     [Fact]

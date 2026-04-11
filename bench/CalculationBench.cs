@@ -18,7 +18,7 @@ public class CalculationBench
         var LParen = Combinator.Char('(');
         var RParen = Combinator.Char(')');
 
-        Func<string, int, (int, float)?> expr = null!;
+        Func<ReadOnlySpan<char>, (int, float)?> expr = null!;
 
         var factor =
             Number |

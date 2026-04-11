@@ -14,7 +14,7 @@ public class AstBench
         public Node? Right { get; set; }
     }
 
-    public Func<string, int, (int, Node)?> BunpoParser = null!;
+    public Func<ReadOnlySpan<char>, (int, Node)?> BunpoParser = null!;
     public Parser<Node> SpracheParser = null!;
 
     public AstBench()
@@ -24,7 +24,7 @@ public class AstBench
     }
 
     [Benchmark]
-    public Func<string, int, (int, Node)?> BunpoSetup()
+    public Func<ReadOnlySpan<char>, (int, Node)?> BunpoSetup()
     {
         var Number = Combinator.NaturalNumberFloat;
 
@@ -35,7 +35,7 @@ public class AstBench
         var LParen = Combinator.Char('(');
         var RParen = Combinator.Char(')');
 
-        Func<string, int, (int, Node)?> expr = null!;
+        Func<ReadOnlySpan<char>, (int, Node)?> expr = null!;
 
         var factor =
             Number.ToOnce(x => new Node { Ope = '9', Value = x }) |

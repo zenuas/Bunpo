@@ -11,7 +11,7 @@ namespace Bunpo.Benchmark;
 
 public class StaticCalculationBench
 {
-    public Func<string, int, (int, double)?> BunpoParser = null!;
+    public Func<ReadOnlySpan<char>, (int, double)?> BunpoParser = null!;
     public Parser<double> SpracheParser = null!;
     public FSharpFunc<CharStream<Unit>, Reply<double>> FParseParser = null!;
     public Func<ReadOnlySpan<char>, (int, double)?> ManualParser = null!;
@@ -39,7 +39,7 @@ public class StaticCalculationBench
     }
 
     [Benchmark]
-    public Func<string, int, (int, double)?> BunpoSetup()
+    public Func<ReadOnlySpan<char>, (int, double)?> BunpoSetup()
     {
         var Number = Combinator.NaturalNumberDouble;
 
@@ -50,7 +50,7 @@ public class StaticCalculationBench
         var LParen = Combinator.Char('(');
         var RParen = Combinator.Char(')');
 
-        Func<string, int, (int, double)?> expr = null!;
+        Func<ReadOnlySpan<char>, (int, double)?> expr = null!;
 
         var factor =
             Number |
