@@ -7,11 +7,11 @@ public class NameTest
     [Fact]
     public void CStyleTest()
     {
-        var underbar = Combinator.Char('_').ToMany().ToOnce(xs => string.Join("", xs));
+        var underbar = Combinator.Char('_').ToMany().ToOnceString();
         var parser = Combinator.WordBoundary
             & underbar
             & Combinator.Letter
-            & Combinator.Words.ToOption().ToOnce(xs => string.Join("", xs));
+            & Combinator.Words.ToOption().ToOnceString();
 
         Assert.Equal(parser.Match(""), null);
         Assert.Equal(parser.Match("abc123"), (0, 6, "abc123"));
@@ -26,11 +26,11 @@ public class NameTest
     [Fact]
     public void CSharpStyleTest()
     {
-        var underbar = Combinator.Char('_').ToMany().ToOnce(xs => string.Join("", xs));
+        var underbar = Combinator.Char('_').ToMany().ToOnceString();
         var parser = (Combinator.WordBoundary | Combinator.String("@"))
             & underbar
             & Combinator.Letter
-            & Combinator.Words.ToOption().ToOnce(xs => string.Join("", xs));
+            & Combinator.Words.ToOption().ToOnceString();
 
         Assert.Equal(parser.Match(""), null);
         Assert.Equal(parser.Match("abc123"), (0, 6, "abc123"));
@@ -52,7 +52,7 @@ public class NameTest
     [Fact]
     public void KebabCaseTest()
     {
-        var word = Combinator.Letter & Combinator.Char(char.IsAsciiLetterOrDigit).ToMany().ToOnce(xs => string.Join("", xs));
+        var word = Combinator.Letter & Combinator.Char(char.IsAsciiLetterOrDigit).ToMany().ToOnceString();
         var parser = Combinator.WordBoundary
             & Combinator.ChainLeft(word, Combinator.Char('-'), (left, op, right) => left + op + right);
 

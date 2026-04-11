@@ -675,6 +675,17 @@ public class BunpoTest
     }
 
     [Fact]
+    public void ToOnceStringTest()
+    {
+        Assert.Equal(Combinator.Char('a').ToOnceString().Match("aaa"), (0, 1, "a"));
+        Assert.Equal(Combinator.Char('a').ToOption().ToOnceString().Match("aaa"), (0, 1, "a"));
+        Assert.Equal(Combinator.Char('a').ToMany().ToOnceString().Match("aaa"), (0, 3, "aaa"));
+
+        Assert.Equal(Combinator.String("a").ToOption().ToOnceString().Match("aaa"), (0, 1, "a"));
+        Assert.Equal(Combinator.String("a").ToMany().ToOnceString().Match("aaa"), (0, 3, "aaa"));
+    }
+
+    [Fact]
     public void NumberInt32Test()
     {
         Assert.Equal(Combinator.NaturalNumberInt32.Match(""), null);

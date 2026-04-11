@@ -417,6 +417,7 @@ public static class Combinator
         public static Func<string, int, (int, string)?> operator &(Func<string, int, (int, char)?> a, string b) => Add(a, String(b));
         public static Func<string, int, (int, string)?> operator &(Func<string, int, (int, char)?> a, char[] b) => Add(a, CharClass(b));
         public Func<string, int, (int, R)?> ToNone<R>() => None<char, R>(self);
+        public Func<string, int, (int, string)?> ToOnceString() => Once(self, x => x.ToString());
     }
     extension(Func<string, int, (int, string)?> self)
     {
@@ -425,6 +426,18 @@ public static class Combinator
         public static Func<string, int, (int, string)?> operator &(Func<string, int, (int, string)?> a, char b) => Add(a, Char(b));
         public static Func<string, int, (int, string)?> operator &(Func<string, int, (int, string)?> a, string b) => Add(a, String(b));
         public static Func<string, int, (int, string)?> operator &(Func<string, int, (int, string)?> a, char[] b) => Add(a, CharClass(b));
+    }
+    extension(Func<string, int, (int, char[])?> self)
+    {
+        public Func<string, int, (int, string)?> ToOnceString() => Once(self, xs => string.Join("", xs));
+    }
+    extension(Func<string, int, (int, string[])?> self)
+    {
+        public Func<string, int, (int, string)?> ToOnceString() => Once(self, xs => string.Join("", xs));
+    }
+    extension(Func<string, int, (int, string?)?> self)
+    {
+        public Func<string, int, (int, string)?> ToOnceString() => Once(self, x => x ?? "");
     }
     extension<T>(Func<string, int, (int, T)?> self)
     {
