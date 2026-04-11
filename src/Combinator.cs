@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Numerics;
+using System.Text;
 
 namespace Bunpo;
 
@@ -10,7 +11,34 @@ public static class Combinator
 {
     public static Func<string, int, (int, char)?> Char(char c) => (input, start) => input.Length <= start || start < 0 || input[start] != c ? null : (1, c);
     public static Func<string, int, (int, char)?> Char(Func<char, bool> f) => (input, start) => input.Length <= start || start < 0 || !f(input[start]) ? null : (1, input[start]);
-    public static Func<string, int, (int, string)?> Chars(Func<string, int, (int, char)?> c) => Many1(c, xs => string.Join("", xs));
+    public static Func<string, int, (int, string)?> Chars(Func<string, int, (int, char)?> c) => (input, start) =>
+    {
+        if (start < 0 || start > input.Length) return null;
+
+        // To avoid StringBuilder instance creation, will try to match up to 4 times.
+        var r1 = c(input, start);
+        if (r1 is null) return null;
+        var length = r1.Value.Item1;
+        var r2 = c(input, start + length);
+        if (r2 is null) return (length, "" + r1.Value.Item2);
+        length += r2.Value.Item1;
+        var r3 = c(input, start + length);
+        if (r3 is null) return (length, "" + r1.Value.Item2 + r2.Value.Item2);
+        length += r3.Value.Item1;
+        var r4 = c(input, start + length);
+        if (r4 is null) return (length, "" + r1.Value.Item2 + r2.Value.Item2 + r3.Value.Item2);
+        length += r4.Value.Item1;
+
+        var chars = new StringBuilder($"{r1.Value.Item2}{r2.Value.Item2}{r3.Value.Item2}{r4.Value.Item2}");
+        while (true)
+        {
+            var result = c(input, start + length);
+            if (result is null) break;
+            length += result.Value.Item1;
+            chars.Append(result.Value.Item2);
+        }
+        return (length, chars.ToString());
+    };
     public static Func<string, int, (int, char)?> CharClass(params char[] chars) => (input, start) => input.Length <= start || start < 0 || !chars.Contains(input[start]) ? null : (1, input[start]);
     public static Func<string, int, (int, char)?> CharClass(string chars) => CharClass(chars.ToCharArray());
     public static Func<string, int, (int, string)?> String(char c) => Once(Char(c), _ => c.ToString());

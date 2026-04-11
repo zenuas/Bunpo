@@ -121,6 +121,18 @@ public class BunpoTest
         Assert.Equal(Combinator.Char(c => c is 'a' or 'b' or 'c').Match("xyz"), null);
     }
 
+    public void CharsTest()
+    {
+        Assert.Equal(Combinator.Chars(Combinator.Letter).Match(""), null);
+        Assert.Equal(Combinator.Chars(Combinator.Letter).Match(" a"), (1, 1, "a"));
+        Assert.Equal(Combinator.Chars(Combinator.Letter).Match(" ab"), (1, 2, "ab"));
+        Assert.Equal(Combinator.Chars(Combinator.Letter).Match(" abc"), (1, 3, "abc"));
+        Assert.Equal(Combinator.Chars(Combinator.Letter).Match(" abcd"), (1, 4, "abcd"));
+        Assert.Equal(Combinator.Chars(Combinator.Letter).Match(" abcde"), (1, 5, "abcde"));
+        Assert.Equal(Combinator.Chars(Combinator.Letter).Match(" abcdef"), (1, 6, "abcdef"));
+        Assert.Equal(Combinator.Chars(Combinator.Letter).Match(" abcdef "), (1, 6, "abcdef"));
+    }
+
     [Fact]
     public void StringTest()
     {
