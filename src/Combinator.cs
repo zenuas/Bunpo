@@ -261,7 +261,7 @@ public static class Combinator
     }
     extension<T>(Func<string, int, (int, T)?> self)
     {
-        public static Func<string, int, (int, T)?> operator ^(Func<string, int, (int, T)?> a, Func<string, int, (int, T)?> b) => Sequence([a, b], static xs => xs.Last());
+        public static Func<string, int, (int, T)?> operator ^(Func<string, int, (int, T)?> a, Func<string, int, (int, T)?> b) => Sequence(a, b);
         public static Func<string, int, (int, T)?> operator |(Func<string, int, (int, T)?> a, Func<string, int, (int, T)?> b) => Choice(a, b);
         public Func<string, int, (int, R)?> ToOnce<R>(Func<T, R> match) => Once(self, match);
         public Func<string, int, (int, R)?> ToNone<R>() => None<T, R>(self);
