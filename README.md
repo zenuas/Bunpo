@@ -34,6 +34,7 @@ _ = parser.Match("abc123xyz"); //=> (0, 6, "abc123")
 ## Examples
 
 [Four arithmetic operations](https://github.com/zenuas/Bunpo/blob/master/test/CalculationTest.cs)  
+[Naming conventions](https://github.com/zenuas/Bunpo/blob/master/test/NameTest.cs)  
 
 ## Benchmark
 
