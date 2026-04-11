@@ -165,7 +165,7 @@ public static class Combinator
         if (r3_start > input.Length) return null;
         var r3 = c(input, r3_start);
 
-        return r3 is { } ? (r1.Value.Item1 + r2.Value.Item1 + r3.Value.Item1, match(r1.Value.Item2, r2.Value.Item2, r3.Value.Item2)) : null;
+        return r3 is { } ? (r3_start - start + r3.Value.Item1, match(r1.Value.Item2, r2.Value.Item2, r3.Value.Item2)) : null;
     };
     public static Func<string, int, (int, R)?> Sequence<T1, T2, T3, T4, R>(Func<string, int, (int, T1)?> a, Func<string, int, (int, T2)?> b, Func<string, int, (int, T3)?> c, Func<string, int, (int, T4)?> d, Func<T1, T2, T3, T4, R> match) => (input, start) =>
     {
@@ -184,7 +184,7 @@ public static class Combinator
         if (r4_start > input.Length) return null;
         var r4 = d(input, r4_start);
 
-        return r4 is { } ? (r1.Value.Item1 + r2.Value.Item1 + r3.Value.Item1 + r4.Value.Item1, match(r1.Value.Item2, r2.Value.Item2, r3.Value.Item2, r4.Value.Item2)) : null;
+        return r4 is { } ? (r4_start - start + r4.Value.Item1, match(r1.Value.Item2, r2.Value.Item2, r3.Value.Item2, r4.Value.Item2)) : null;
     };
     public static Func<string, int, (int, R)?> Sequence<T1, T2, T3, T4, T5, R>(Func<string, int, (int, T1)?> a, Func<string, int, (int, T2)?> b, Func<string, int, (int, T3)?> c, Func<string, int, (int, T4)?> d, Func<string, int, (int, T5)?> e, Func<T1, T2, T3, T4, T5, R> match) => (input, start) =>
     {
@@ -207,7 +207,7 @@ public static class Combinator
         if (r5_start > input.Length) return null;
         var r5 = e(input, r5_start);
 
-        return r5 is { } ? (r1.Value.Item1 + r2.Value.Item1 + r3.Value.Item1 + r4.Value.Item1 + r5.Value.Item1, match(r1.Value.Item2, r2.Value.Item2, r3.Value.Item2, r4.Value.Item2, r5.Value.Item2)) : null;
+        return r5 is { } ? (r5_start - start + r5.Value.Item1, match(r1.Value.Item2, r2.Value.Item2, r3.Value.Item2, r4.Value.Item2, r5.Value.Item2)) : null;
     };
     public static Func<string, int, (int, R)?> Sequence<T1, T2, T3, T4, T5, T6, R>(Func<string, int, (int, T1)?> a, Func<string, int, (int, T2)?> b, Func<string, int, (int, T3)?> c, Func<string, int, (int, T4)?> d, Func<string, int, (int, T5)?> e, Func<string, int, (int, T6)?> f, Func<T1, T2, T3, T4, T5, T6, R> match) => (input, start) =>
     {
@@ -234,7 +234,7 @@ public static class Combinator
         if (r6_start > input.Length) return null;
         var r6 = f(input, r6_start);
 
-        return r6 is { } ? (r1.Value.Item1 + r2.Value.Item1 + r3.Value.Item1 + r4.Value.Item1 + r5.Value.Item1 + r6.Value.Item1, match(r1.Value.Item2, r2.Value.Item2, r3.Value.Item2, r4.Value.Item2, r5.Value.Item2, r6.Value.Item2)) : null;
+        return r6 is { } ? (r6_start - start + r6.Value.Item1, match(r1.Value.Item2, r2.Value.Item2, r3.Value.Item2, r4.Value.Item2, r5.Value.Item2, r6.Value.Item2)) : null;
     };
     public static Func<string, int, (int, R)?> Sequence<T1, T2, T3, T4, T5, T6, T7, R>(Func<string, int, (int, T1)?> a, Func<string, int, (int, T2)?> b, Func<string, int, (int, T3)?> c, Func<string, int, (int, T4)?> d, Func<string, int, (int, T5)?> e, Func<string, int, (int, T6)?> f, Func<string, int, (int, T7)?> g, Func<T1, T2, T3, T4, T5, T6, T7, R> match) => (input, start) =>
     {
@@ -265,7 +265,7 @@ public static class Combinator
         if (r7_start > input.Length) return null;
         var r7 = g(input, r7_start);
 
-        return r7 is { } ? (r1.Value.Item1 + r2.Value.Item1 + r3.Value.Item1 + r4.Value.Item1 + r5.Value.Item1 + r6.Value.Item1 + r7.Value.Item1, match(r1.Value.Item2, r2.Value.Item2, r3.Value.Item2, r4.Value.Item2, r5.Value.Item2, r6.Value.Item2, r7.Value.Item2)) : null;
+        return r7 is { } ? (r7_start - start + r7.Value.Item1, match(r1.Value.Item2, r2.Value.Item2, r3.Value.Item2, r4.Value.Item2, r5.Value.Item2, r6.Value.Item2, r7.Value.Item2)) : null;
     };
     public static Func<string, int, (int, R)?> Sequence<T1, T2, T3, T4, T5, T6, T7, T8, R>(Func<string, int, (int, T1)?> a, Func<string, int, (int, T2)?> b, Func<string, int, (int, T3)?> c, Func<string, int, (int, T4)?> d, Func<string, int, (int, T5)?> e, Func<string, int, (int, T6)?> f, Func<string, int, (int, T7)?> g, Func<string, int, (int, T8)?> h, Func<T1, T2, T3, T4, T5, T6, T7, T8, R> match) => (input, start) =>
     {
@@ -300,7 +300,7 @@ public static class Combinator
         if (r8_start > input.Length) return null;
         var r8 = h(input, r8_start);
 
-        return r8 is { } ? (r1.Value.Item1 + r2.Value.Item1 + r3.Value.Item1 + r4.Value.Item1 + r5.Value.Item1 + r6.Value.Item1 + r7.Value.Item1 + r8.Value.Item1, match(r1.Value.Item2, r2.Value.Item2, r3.Value.Item2, r4.Value.Item2, r5.Value.Item2, r6.Value.Item2, r7.Value.Item2, r8.Value.Item2)) : null;
+        return r8 is { } ? (r8_start - start + r8.Value.Item1, match(r1.Value.Item2, r2.Value.Item2, r3.Value.Item2, r4.Value.Item2, r5.Value.Item2, r6.Value.Item2, r7.Value.Item2, r8.Value.Item2)) : null;
     };
     public static Func<string, int, (int, T?)?> Sequence<T>(params Func<string, int, (int, T)?>[] sequence) => Sequence(sequence, static xs => xs.LastOrDefault());
     public static Func<string, int, (int, R)?> Sequence<T, R>(Func<string, int, (int, T)?>[] sequence, Func<IReadOnlyList<T>, R> match) => (input, start) =>
