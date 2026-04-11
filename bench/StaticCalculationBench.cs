@@ -1,5 +1,4 @@
 ﻿using BenchmarkDotNet.Attributes;
-using BenchmarkDotNet.Order;
 using FParsec;
 using FParsec.CSharp;
 using Microsoft.FSharp.Core;
@@ -10,7 +9,6 @@ using static FParsec.CSharp.PrimitivesCS;
 
 namespace Bunpo.Benchmark;
 
-[Orderer(SummaryOrderPolicy.Declared)]
 public class StaticCalculationBench
 {
     public static Func<string, int, (int, double)?> BunpoParser = null!;

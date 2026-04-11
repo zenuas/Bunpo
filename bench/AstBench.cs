@@ -47,6 +47,19 @@ public class AstBench
     }
 
     [Benchmark]
+    public void BunpoParse()
+    {
+        _ = BunpoParser.Parse("1-(2*3/4+5)");
+    }
+
+    [Benchmark]
+    public void BunpoParseAndEval()
+    {
+        var result = BunpoParser.Parse("1-(2*3/4+5)");
+        if (Eval(result) != -5.5f) throw new("");
+    }
+
+    [Benchmark]
     public Parser<Node> SpracheSetup()
     {
         var Number =
@@ -74,19 +87,6 @@ public class AstBench
                 (op, left, right) => new Node { Ope = op, Value = 0, Left = left, Right = right });
 
         return Expression;
-    }
-
-    [Benchmark]
-    public void BunpoParse()
-    {
-        _ = BunpoParser.Parse("1-(2*3/4+5)");
-    }
-
-    [Benchmark]
-    public void BunpoParseAndEval()
-    {
-        var result = BunpoParser.Parse("1-(2*3/4+5)");
-        if (Eval(result) != -5.5f) throw new("");
     }
 
     [Benchmark]
