@@ -755,6 +755,30 @@ public class BunpoTest
     }
 
     [Fact]
+    public void TryParseTest()
+    {
+        var parser = Combinator.Char('a');
+
+        Assert.Equal(parser.TryParse("1", out var _), false);
+        Assert.Equal(parser.TryParse("a", out var a), true);
+        Assert.Equal(a, 'a');
+        Assert.Equal(parser.TryParse("xa", out var _), false);
+
+        Assert.Equal(parser.TryParse("xa", 0, out var _), false);
+        Assert.Equal(parser.TryParse("xa", 1, out var a1), true);
+        Assert.Equal(a1, 'a');
+    }
+
+    [Fact]
+    public void IsMatchTest()
+    {
+        Assert.Equal(Combinator.Char('a').IsMatch("1"), false);
+        Assert.Equal(Combinator.Char('a').IsMatch("a"), true);
+        Assert.Equal(Combinator.Char('a').IsMatch("x1", 1), false);
+        Assert.Equal(Combinator.Char('a').IsMatch("xa", 1), true);
+    }
+
+    [Fact]
     public void Sample1()
     {
         // README.md Usage Sample
