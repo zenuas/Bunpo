@@ -255,11 +255,11 @@ public static class Combinator
     public static Func<string, int, (int, T)?> RealNumber<T>(Func<string, int, (int, char)?> c, Func<T, char, int, T> int_match, Func<T, char, int, T> dec_match) where T : IAdditionOperators<T, T, T> => (input, start) =>
     {
         if (start < 0 || start > input.Length) return null;
-        var integer = NaturalNumber<T>(c, int_match)(input, start);
+        var integer = NaturalNumber(c, int_match)(input, start);
         if (integer is null) return null;
         var point = Char('.')(input, start + integer.Value.Item1);
         if (point is null) return integer;
-        var fractional = NaturalNumber<T>(c, dec_match)(input, start + integer.Value.Item1 + point.Value.Item1);
+        var fractional = NaturalNumber(c, dec_match)(input, start + integer.Value.Item1 + point.Value.Item1);
         if (fractional is null) return (integer.Value.Item1 + point.Value.Item1, integer.Value.Item2);
         return (integer.Value.Item1 + point.Value.Item1 + fractional.Value.Item1, integer.Value.Item2 + fractional.Value.Item2);
     };
