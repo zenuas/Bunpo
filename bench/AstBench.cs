@@ -14,8 +14,8 @@ public class AstBench
         public Node? Right { get; set; }
     }
 
-    public static Func<string, int, (int, Node)?> BunpoParser = null!;
-    public static Parser<Node> SpracheParser = null!;
+    public Func<string, int, (int, Node)?> BunpoParser = null!;
+    public Parser<Node> SpracheParser = null!;
 
     public AstBench()
     {

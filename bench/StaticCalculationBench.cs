@@ -11,13 +11,13 @@ namespace Bunpo.Benchmark;
 
 public class StaticCalculationBench
 {
-    public static Func<string, int, (int, double)?> BunpoParser = null!;
-    public static Parser<double> SpracheParser = null!;
-    public static FSharpFunc<CharStream<Unit>, Reply<double>> FParseParser = null!;
+    public Func<string, int, (int, double)?> BunpoParser = null!;
+    public Parser<double> SpracheParser = null!;
+    public FSharpFunc<CharStream<Unit>, Reply<double>> FParseParser = null!;
 
-    public static string Expr5 = "1-(2*3/4+5)";
+    public const string Expr5 = "1-(2*3/4+5)";
 
-    public static string Expr300 =
+    public const string Expr300 =
         "(1-(2*3/4+5)-6+7*8-9/10*11*12+13-(14*15-16+(17+18+19)/20)*21-((22+23-24*25)*26)*27+28-29-30)" +
         "+(1-(2*3/4+5)-6+7*8-9/10*11*12+13-(14*15-16+(17+18+19)/20)*21-((22+23-24*25)*26)*27+28-29-30)" +
         "+(1-(2*3/4+5)-6+7*8-9/10*11*12+13-(14*15-16+(17+18+19)/20)*21-((22+23-24*25)*26)*27+28-29-30)" +
