@@ -134,7 +134,13 @@ public static class Combinator
         return (length, left);
     };
 
-    public static Func<string, int, (int, T2)?> Sequence<T1, T2>(Func<string, int, (int, T1)?> a, Func<string, int, (int, T2)?> b) => Sequence(a, b, static (_, x) => x);
+    public static Func<string, int, (int, T2)?> Sequence<T1, T2>(Func<string, int, (int, T1)?> a, Func<string, int, (int, T2)?> b) => Sequence(a, b, (_, x) => x);
+    public static Func<string, int, (int, T3)?> Sequence<T1, T2, T3>(Func<string, int, (int, T1)?> a, Func<string, int, (int, T2)?> b, Func<string, int, (int, T3)?> c) => Sequence(a, b, c, (_, _, x) => x);
+    public static Func<string, int, (int, T4)?> Sequence<T1, T2, T3, T4>(Func<string, int, (int, T1)?> a, Func<string, int, (int, T2)?> b, Func<string, int, (int, T3)?> c, Func<string, int, (int, T4)?> d) => Sequence(a, b, c, d, (_, _, _, x) => x);
+    public static Func<string, int, (int, T5)?> Sequence<T1, T2, T3, T4, T5>(Func<string, int, (int, T1)?> a, Func<string, int, (int, T2)?> b, Func<string, int, (int, T3)?> c, Func<string, int, (int, T4)?> d, Func<string, int, (int, T5)?> e) => Sequence(a, b, c, d, e, (_, _, _, _, x) => x);
+    public static Func<string, int, (int, T6)?> Sequence<T1, T2, T3, T4, T5, T6>(Func<string, int, (int, T1)?> a, Func<string, int, (int, T2)?> b, Func<string, int, (int, T3)?> c, Func<string, int, (int, T4)?> d, Func<string, int, (int, T5)?> e, Func<string, int, (int, T6)?> f) => Sequence(a, b, c, d, e, f, (_, _, _, _, _, x) => x);
+    public static Func<string, int, (int, T7)?> Sequence<T1, T2, T3, T4, T5, T6, T7>(Func<string, int, (int, T1)?> a, Func<string, int, (int, T2)?> b, Func<string, int, (int, T3)?> c, Func<string, int, (int, T4)?> d, Func<string, int, (int, T5)?> e, Func<string, int, (int, T6)?> f, Func<string, int, (int, T7)?> g) => Sequence(a, b, c, d, e, f, g, (_, _, _, _, _, _, x) => x);
+    public static Func<string, int, (int, T8)?> Sequence<T1, T2, T3, T4, T5, T6, T7, T8>(Func<string, int, (int, T1)?> a, Func<string, int, (int, T2)?> b, Func<string, int, (int, T3)?> c, Func<string, int, (int, T4)?> d, Func<string, int, (int, T5)?> e, Func<string, int, (int, T6)?> f, Func<string, int, (int, T7)?> g, Func<string, int, (int, T8)?> h) => Sequence(a, b, c, d, e, f, g, h, (_, _, _, _, _, _, _, x) => x);
     public static Func<string, int, (int, R)?> Sequence<T1, T2, R>(Func<string, int, (int, T1)?> a, Func<string, int, (int, T2)?> b, Func<T1, T2, R> match) => (input, start) =>
     {
         if (start < 0 || start > input.Length) return null;
@@ -145,7 +151,6 @@ public static class Combinator
         var r2 = b(input, r2_start);
         return r2 is { } ? (r1.Value.Item1 + r2.Value.Item1, match(r1.Value.Item2, r2.Value.Item2)) : null;
     };
-    public static Func<string, int, (int, T2)?> Sequence<T1, T2>(Func<string, int, (int, T1)?> a, Func<string, int, (int, T2)?> b, Func<string, int, (int, T2)?> c) => Sequence(a, b, c, static (_, _, x) => x);
     public static Func<string, int, (int, R)?> Sequence<T1, T2, T3, R>(Func<string, int, (int, T1)?> a, Func<string, int, (int, T2)?> b, Func<string, int, (int, T3)?> c, Func<T1, T2, T3, R> match) => (input, start) =>
     {
         if (start < 0 || start > input.Length) return null;
@@ -160,6 +165,141 @@ public static class Combinator
         var r3 = c(input, r3_start);
 
         return r3 is { } ? (r1.Value.Item1 + r2.Value.Item1 + r3.Value.Item1, match(r1.Value.Item2, r2.Value.Item2, r3.Value.Item2)) : null;
+    };
+    public static Func<string, int, (int, R)?> Sequence<T1, T2, T3, T4, R>(Func<string, int, (int, T1)?> a, Func<string, int, (int, T2)?> b, Func<string, int, (int, T3)?> c, Func<string, int, (int, T4)?> d, Func<T1, T2, T3, T4, R> match) => (input, start) =>
+    {
+        if (start < 0 || start > input.Length) return null;
+        var r1 = a(input, start);
+        if (r1 is null) return null;
+        var r2_start = start + r1.Value.Item1;
+        if (r2_start > input.Length) return null;
+        var r2 = b(input, r2_start);
+        if (r2 is null) return null;
+        var r3_start = r2_start + r2.Value.Item1;
+        if (r3_start > input.Length) return null;
+        var r3 = c(input, r3_start);
+        if (r3 is null) return null;
+        var r4_start = r3_start + r3.Value.Item1;
+        if (r4_start > input.Length) return null;
+        var r4 = d(input, r4_start);
+
+        return r4 is { } ? (r1.Value.Item1 + r2.Value.Item1 + r3.Value.Item1 + r4.Value.Item1, match(r1.Value.Item2, r2.Value.Item2, r3.Value.Item2, r4.Value.Item2)) : null;
+    };
+    public static Func<string, int, (int, R)?> Sequence<T1, T2, T3, T4, T5, R>(Func<string, int, (int, T1)?> a, Func<string, int, (int, T2)?> b, Func<string, int, (int, T3)?> c, Func<string, int, (int, T4)?> d, Func<string, int, (int, T5)?> e, Func<T1, T2, T3, T4, T5, R> match) => (input, start) =>
+    {
+        if (start < 0 || start > input.Length) return null;
+        var r1 = a(input, start);
+        if (r1 is null) return null;
+        var r2_start = start + r1.Value.Item1;
+        if (r2_start > input.Length) return null;
+        var r2 = b(input, r2_start);
+        if (r2 is null) return null;
+        var r3_start = r2_start + r2.Value.Item1;
+        if (r3_start > input.Length) return null;
+        var r3 = c(input, r3_start);
+        if (r3 is null) return null;
+        var r4_start = r3_start + r3.Value.Item1;
+        if (r4_start > input.Length) return null;
+        var r4 = d(input, r4_start);
+        if (r4 is null) return null;
+        var r5_start = r4_start + r4.Value.Item1;
+        if (r5_start > input.Length) return null;
+        var r5 = e(input, r5_start);
+
+        return r5 is { } ? (r1.Value.Item1 + r2.Value.Item1 + r3.Value.Item1 + r4.Value.Item1 + r5.Value.Item1, match(r1.Value.Item2, r2.Value.Item2, r3.Value.Item2, r4.Value.Item2, r5.Value.Item2)) : null;
+    };
+    public static Func<string, int, (int, R)?> Sequence<T1, T2, T3, T4, T5, T6, R>(Func<string, int, (int, T1)?> a, Func<string, int, (int, T2)?> b, Func<string, int, (int, T3)?> c, Func<string, int, (int, T4)?> d, Func<string, int, (int, T5)?> e, Func<string, int, (int, T6)?> f, Func<T1, T2, T3, T4, T5, T6, R> match) => (input, start) =>
+    {
+        if (start < 0 || start > input.Length) return null;
+        var r1 = a(input, start);
+        if (r1 is null) return null;
+        var r2_start = start + r1.Value.Item1;
+        if (r2_start > input.Length) return null;
+        var r2 = b(input, r2_start);
+        if (r2 is null) return null;
+        var r3_start = r2_start + r2.Value.Item1;
+        if (r3_start > input.Length) return null;
+        var r3 = c(input, r3_start);
+        if (r3 is null) return null;
+        var r4_start = r3_start + r3.Value.Item1;
+        if (r4_start > input.Length) return null;
+        var r4 = d(input, r4_start);
+        if (r4 is null) return null;
+        var r5_start = r4_start + r4.Value.Item1;
+        if (r5_start > input.Length) return null;
+        var r5 = e(input, r5_start);
+        if (r5 is null) return null;
+        var r6_start = r5_start + r5.Value.Item1;
+        if (r6_start > input.Length) return null;
+        var r6 = f(input, r6_start);
+
+        return r6 is { } ? (r1.Value.Item1 + r2.Value.Item1 + r3.Value.Item1 + r4.Value.Item1 + r5.Value.Item1 + r6.Value.Item1, match(r1.Value.Item2, r2.Value.Item2, r3.Value.Item2, r4.Value.Item2, r5.Value.Item2, r6.Value.Item2)) : null;
+    };
+    public static Func<string, int, (int, R)?> Sequence<T1, T2, T3, T4, T5, T6, T7, R>(Func<string, int, (int, T1)?> a, Func<string, int, (int, T2)?> b, Func<string, int, (int, T3)?> c, Func<string, int, (int, T4)?> d, Func<string, int, (int, T5)?> e, Func<string, int, (int, T6)?> f, Func<string, int, (int, T7)?> g, Func<T1, T2, T3, T4, T5, T6, T7, R> match) => (input, start) =>
+    {
+        if (start < 0 || start > input.Length) return null;
+        var r1 = a(input, start);
+        if (r1 is null) return null;
+        var r2_start = start + r1.Value.Item1;
+        if (r2_start > input.Length) return null;
+        var r2 = b(input, r2_start);
+        if (r2 is null) return null;
+        var r3_start = r2_start + r2.Value.Item1;
+        if (r3_start > input.Length) return null;
+        var r3 = c(input, r3_start);
+        if (r3 is null) return null;
+        var r4_start = r3_start + r3.Value.Item1;
+        if (r4_start > input.Length) return null;
+        var r4 = d(input, r4_start);
+        if (r4 is null) return null;
+        var r5_start = r4_start + r4.Value.Item1;
+        if (r5_start > input.Length) return null;
+        var r5 = e(input, r5_start);
+        if (r5 is null) return null;
+        var r6_start = r5_start + r5.Value.Item1;
+        if (r6_start > input.Length) return null;
+        var r6 = f(input, r6_start);
+        if (r6 is null) return null;
+        var r7_start = r6_start + r6.Value.Item1;
+        if (r7_start > input.Length) return null;
+        var r7 = g(input, r7_start);
+
+        return r7 is { } ? (r1.Value.Item1 + r2.Value.Item1 + r3.Value.Item1 + r4.Value.Item1 + r5.Value.Item1 + r6.Value.Item1 + r7.Value.Item1, match(r1.Value.Item2, r2.Value.Item2, r3.Value.Item2, r4.Value.Item2, r5.Value.Item2, r6.Value.Item2, r7.Value.Item2)) : null;
+    };
+    public static Func<string, int, (int, R)?> Sequence<T1, T2, T3, T4, T5, T6, T7, T8, R>(Func<string, int, (int, T1)?> a, Func<string, int, (int, T2)?> b, Func<string, int, (int, T3)?> c, Func<string, int, (int, T4)?> d, Func<string, int, (int, T5)?> e, Func<string, int, (int, T6)?> f, Func<string, int, (int, T7)?> g, Func<string, int, (int, T8)?> h, Func<T1, T2, T3, T4, T5, T6, T7, T8, R> match) => (input, start) =>
+    {
+        if (start < 0 || start > input.Length) return null;
+        var r1 = a(input, start);
+        if (r1 is null) return null;
+        var r2_start = start + r1.Value.Item1;
+        if (r2_start > input.Length) return null;
+        var r2 = b(input, r2_start);
+        if (r2 is null) return null;
+        var r3_start = r2_start + r2.Value.Item1;
+        if (r3_start > input.Length) return null;
+        var r3 = c(input, r3_start);
+        if (r3 is null) return null;
+        var r4_start = r3_start + r3.Value.Item1;
+        if (r4_start > input.Length) return null;
+        var r4 = d(input, r4_start);
+        if (r4 is null) return null;
+        var r5_start = r4_start + r4.Value.Item1;
+        if (r5_start > input.Length) return null;
+        var r5 = e(input, r5_start);
+        if (r5 is null) return null;
+        var r6_start = r5_start + r5.Value.Item1;
+        if (r6_start > input.Length) return null;
+        var r6 = f(input, r6_start);
+        if (r6 is null) return null;
+        var r7_start = r6_start + r6.Value.Item1;
+        if (r7_start > input.Length) return null;
+        var r7 = g(input, r7_start);
+        if (r7 is null) return null;
+        var r8_start = r7_start + r7.Value.Item1;
+        if (r8_start > input.Length) return null;
+        var r8 = h(input, r8_start);
+
+        return r8 is { } ? (r1.Value.Item1 + r2.Value.Item1 + r3.Value.Item1 + r4.Value.Item1 + r5.Value.Item1 + r6.Value.Item1 + r7.Value.Item1 + r8.Value.Item1, match(r1.Value.Item2, r2.Value.Item2, r3.Value.Item2, r4.Value.Item2, r5.Value.Item2, r6.Value.Item2, r7.Value.Item2, r8.Value.Item2)) : null;
     };
     public static Func<string, int, (int, T?)?> Sequence<T>(params Func<string, int, (int, T)?>[] sequence) => Sequence(sequence, static xs => xs.LastOrDefault());
     public static Func<string, int, (int, R)?> Sequence<T, R>(Func<string, int, (int, T)?>[] sequence, Func<IReadOnlyList<T>, R> match) => (input, start) =>
