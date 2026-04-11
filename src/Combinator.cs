@@ -126,10 +126,9 @@ public static class Combinator
         {
             var opr = op(input, start + length);
             if (opr is null) break;
-            length += opr.Value.Item1;
-            var right = chain(input, start + length);
+            var right = chain(input, start + length + opr.Value.Item1);
             if (right is null) break;
-            length += right.Value.Item1;
+            length += opr.Value.Item1 + right.Value.Item1;
             left = match(left, opr.Value.Item2, right.Value.Item2);
         }
         return (length, left);

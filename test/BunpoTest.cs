@@ -255,6 +255,20 @@ public class BunpoTest
     }
 
     [Fact]
+    public void ChainLeftTest()
+    {
+        var parser = Combinator.ChainLeft(Combinator.String("a"), Combinator.Char('+'), (left, op, right) => left + op + right);
+
+        Assert.Equal(parser.Match(""), null);
+        Assert.Equal(parser.Match("a"), (0, 1, "a"));
+        Assert.Equal(parser.Match("a+a"), (0, 3, "a+a"));
+        Assert.Equal(parser.Match("a+a+a"), (0, 5, "a+a+a"));
+        Assert.Equal(parser.Match("a+"), (0, 1, "a"));
+        Assert.Equal(parser.Match("+a"), (1, 1, "a"));
+        Assert.Equal(parser.Match("b"), null);
+    }
+
+    [Fact]
     public void SequenceTest()
     {
         Assert.Equal(Combinator.Sequence(Combinator.Char('a'), Combinator.Char('b')).Match(""), null);
