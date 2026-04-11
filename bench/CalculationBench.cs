@@ -22,7 +22,7 @@ public class CalculationBench
 
         var factor =
             Number |
-            Combinator.Sequence(LParen.ToNone<float>(), Combinator.Lazy(() => expr), RParen.ToNone<float>(), (_, x, _) => x);
+            Combinator.Sequence(LParen, Combinator.Lazy(() => expr), RParen, (_, x, _) => x);
         var term = Combinator.ChainLeft(factor, Mul | Div, (left, op, right) => op == '*' ? left * right : left / right);
         expr = Combinator.ChainLeft(term, Add | Sub, (left, op, right) => op == '+' ? left + right : left - right);
 
