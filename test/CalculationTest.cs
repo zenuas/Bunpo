@@ -8,7 +8,7 @@ public class CalculationTest
     [Fact]
     public void CalcTest()
     {
-        var Number = Combinator.NumberFloat;
+        var Number = Combinator.NaturalNumberFloat;
         var Spaces = Combinator.Spaces.ToOption().ToNone<string?, char>();
 
         var Add = Combinator.Char('+');

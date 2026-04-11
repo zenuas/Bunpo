@@ -39,7 +39,7 @@ public class StaticCalculationBench
     [Benchmark]
     public Func<string, int, (int, double)?> BunpoSetup()
     {
-        var Number = Combinator.NumberDouble;
+        var Number = Combinator.NaturalNumberDouble;
 
         var Add = Combinator.Char('+');
         var Sub = Combinator.Char('-');

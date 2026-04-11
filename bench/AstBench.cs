@@ -26,7 +26,7 @@ public class AstBench
     [Benchmark]
     public Func<string, int, (int, Node)?> BunpoSetup()
     {
-        var Number = Combinator.NumberFloat;
+        var Number = Combinator.NaturalNumberFloat;
 
         var Add = Combinator.Char('+');
         var Sub = Combinator.Char('-');
