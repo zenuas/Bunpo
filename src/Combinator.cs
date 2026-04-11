@@ -42,7 +42,7 @@ public static class Combinator
     public static Func<string, int, (int, char)?> CharClass(params char[] chars) => (input, start) => input.Length <= start || start < 0 || !chars.Contains(input[start]) ? null : (1, input[start]);
     public static Func<string, int, (int, char)?> CharClass(string chars) => CharClass(chars.ToCharArray());
     public static Func<string, int, (int, string)?> String(char c) => Once(Char(c), _ => c.ToString());
-    public static Func<string, int, (int, string)?> String(string s) => (input, start) => input.Length < start + s.Length || start < 0 || !input[start..].StartsWith(s, StringComparison.Ordinal) ? null : (s.Length, s);
+    public static Func<string, int, (int, string)?> String(string s) => (input, start) => input.Length < start + s.Length || start < 0 || !input.AsSpan()[start..].StartsWith(s, StringComparison.Ordinal) ? null : (s.Length, s);
     public static Func<string, int, (int, string)?> String(Func<string, int, (int, char)?> c) => Once(c, x => x.ToString());
     public static Func<string, int, (int, T)?> String<T>(Func<string, int, (int, T)?> f) => (input, start) => f(input, start);
 
