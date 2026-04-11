@@ -249,20 +249,17 @@ public static class Combinator
         }
         return (length, value);
     };
-    public static Func<string, int, (int, T)?> RealNumber<T>(Func<string, int, (int, char)?> c, Func<T, char, int, T> int_match, Func<T, char, int, T> dec_match) where T : IAdditionOperators<T, T, T>
+    public static Func<string, int, (int, T)?> RealNumber<T>(Func<string, int, (int, char)?> c, Func<T, char, int, T> int_match, Func<T, char, int, T> dec_match) where T : IAdditionOperators<T, T, T> => (input, start) =>
     {
-        return (input, start) =>
-        {
-            if (start < 0 || start > input.Length) return null;
-            var integer = NaturalNumber<T>(c, int_match)(input, start);
-            if (integer is null) return null;
-            var point = Char('.')(input, start + integer.Value.Item1);
-            if (point is null) return integer;
-            var fractional = NaturalNumber<T>(c, dec_match)(input, start + integer.Value.Item1 + point.Value.Item1);
-            if (fractional is null) return (integer.Value.Item1 + point.Value.Item1, integer.Value.Item2);
-            return (integer.Value.Item1 + point.Value.Item1 + fractional.Value.Item1, integer.Value.Item2 + fractional.Value.Item2);
-        };
-    }
+        if (start < 0 || start > input.Length) return null;
+        var integer = NaturalNumber<T>(c, int_match)(input, start);
+        if (integer is null) return null;
+        var point = Char('.')(input, start + integer.Value.Item1);
+        if (point is null) return integer;
+        var fractional = NaturalNumber<T>(c, dec_match)(input, start + integer.Value.Item1 + point.Value.Item1);
+        if (fractional is null) return (integer.Value.Item1 + point.Value.Item1, integer.Value.Item2);
+        return (integer.Value.Item1 + point.Value.Item1 + fractional.Value.Item1, integer.Value.Item2 + fractional.Value.Item2);
+    };
 
     public static Func<string, int, (int, T)?> Lazy<T>(Func<Func<string, int, (int, T)?>> f) => (input, start) => f()(input, start);
     public static Func<string, int, (int, string)?> Add(Func<string, int, (int, char)?> a, Func<string, int, (int, char)?> b) => Sequence(a, b, static (xa, xb) => $"{xa}{xb}");
