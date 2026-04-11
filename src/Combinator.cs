@@ -50,7 +50,7 @@ public static class Combinator
     public static Func<string, int, (int, R)?> None<T, R>(Func<string, int, (int, T)?> f) => Once<T, R>(f, _ => default!);
     public static Func<string, int, (int, T?)?> Option<T>(Func<string, int, (int, T)?> once) => (input, start) => input.Length < start || start < 0 ? null : once(input, start) is { } p ? p : (0, default);
 
-    public static Func<string, int, (int, T?)?> Many<T>(Func<string, int, (int, T)?> many) => Many(many, static xs => xs.LastOrDefault());
+    public static Func<string, int, (int, T?)?> Many<T>(Func<string, int, (int, T)?> many) => Many(many, xs => xs.LastOrDefault());
     public static Func<string, int, (int, R)?> Many<T, R>(Func<string, int, (int, T)?> many, Func<IReadOnlyList<T>, R> match) => (input, start) =>
     {
         if (start < 0 || start > input.Length) return null;
@@ -66,7 +66,7 @@ public static class Combinator
         return (length, match(values));
     };
 
-    public static Func<string, int, (int, T)?> Many1<T>(Func<string, int, (int, T)?> many) => Many1(many, static xs => xs.Last());
+    public static Func<string, int, (int, T)?> Many1<T>(Func<string, int, (int, T)?> many) => Many1(many, xs => xs.Last());
     public static Func<string, int, (int, R)?> Many1<T, R>(Func<string, int, (int, T)?> many, Func<IReadOnlyList<T>, R> match) => (input, start) =>
     {
         if (start < 0 || start > input.Length) return null;
@@ -85,7 +85,7 @@ public static class Combinator
         return (length, match(values));
     };
 
-    public static Func<string, int, (int, T?)?> Many<T>(Func<string, int, (int, T)?> many, uint min, uint max) => Many(many, min, max, static xs => xs.LastOrDefault());
+    public static Func<string, int, (int, T?)?> Many<T>(Func<string, int, (int, T)?> many, uint min, uint max) => Many(many, min, max, xs => xs.LastOrDefault());
     public static Func<string, int, (int, R)?> Many<T, R>(Func<string, int, (int, T)?> many, uint min, uint max, Func<IReadOnlyList<T>, R> match)
     {
         ArgumentOutOfRangeException.ThrowIfGreaterThan(min, max);
@@ -404,10 +404,10 @@ public static class Combinator
     };
 
     public static Func<string, int, (int, T)?> Lazy<T>(Func<Func<string, int, (int, T)?>> f) => (input, start) => f()(input, start);
-    public static Func<string, int, (int, string)?> Add(Func<string, int, (int, char)?> a, Func<string, int, (int, char)?> b) => Sequence(a, b, static (xa, xb) => $"{xa}{xb}");
+    public static Func<string, int, (int, string)?> Add(Func<string, int, (int, char)?> a, Func<string, int, (int, char)?> b) => Sequence(a, b, (xa, xb) => $"{xa}{xb}");
     public static Func<string, int, (int, string)?> Add(Func<string, int, (int, char)?> a, Func<string, int, (int, string)?> b) => Add(Once(a, x => x.ToString()), b);
     public static Func<string, int, (int, string)?> Add(Func<string, int, (int, string)?> a, Func<string, int, (int, char)?> b) => Add(a, Once(b, x => x.ToString()));
-    public static Func<string, int, (int, string)?> Add(Func<string, int, (int, string)?> a, Func<string, int, (int, string)?> b) => Sequence(a, b, static (xa, xb) => xa + xb);
+    public static Func<string, int, (int, string)?> Add(Func<string, int, (int, string)?> a, Func<string, int, (int, string)?> b) => Sequence(a, b, (xa, xb) => xa + xb);
 
     extension(Func<string, int, (int, char)?> self)
     {
