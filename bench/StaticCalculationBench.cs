@@ -155,7 +155,7 @@ public class StaticCalculationBench
     [Benchmark]
     public Func<ReadOnlySpan<char>, (int, double)?> ManualSetup()
     {
-        var Number = (int, double)? (ReadOnlySpan<char> input) =>
+        static (int, double)? number(ReadOnlySpan<char> input)
         {
             if (input.Length == 0 || !char.IsAsciiDigit(input[0])) return null;
             double value = input[0] - '0';
@@ -165,20 +165,18 @@ public class StaticCalculationBench
                 value = value * 10 + input[i] - '0';
             }
             return (input.Length, value);
-        };
+        }
 
-        Func<ReadOnlySpan<char>, (int, double)?> expr = null!;
-
-        var factor = (int, double)? (ReadOnlySpan<char> input) =>
+        static (int, double)? factor(ReadOnlySpan<char> input)
         {
-            if (Number(input) is { } num) return num;
+            if (number(input) is { } num) return num;
             if (input[0] == '(')
             {
                 if (expr(input[1..]) is { } e && 1 + e.Item1 < input.Length && input[1 + e.Item1] == ')') return (2 + e.Item1, e.Item2);
             }
             return null;
-        };
-        var term = (int, double)? (ReadOnlySpan<char> input) =>
+        }
+        static (int, double)? term(ReadOnlySpan<char> input)
         {
             if (factor(input) is { } left)
             {
@@ -199,8 +197,8 @@ public class StaticCalculationBench
                 return left;
             }
             return null;
-        };
-        expr = (int, double)? (ReadOnlySpan<char> input) =>
+        }
+        static (int, double)? expr(ReadOnlySpan<char> input)
         {
             if (term(input) is { } left)
             {
@@ -221,7 +219,7 @@ public class StaticCalculationBench
                 return left;
             }
             return null;
-        };
+        }
 
         return expr;
     }
